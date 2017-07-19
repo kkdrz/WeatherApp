@@ -16,8 +16,7 @@ import lombok.Data;
 @XmlRootElement(name = "response")
 public class Response {
 
-    public Response() {
-    }
+    public Response() {}
 
     protected String version;
     @XmlElement(required = true)
@@ -30,6 +29,32 @@ public class Response {
     protected Response.Results results;
     @XmlElement(name = "current_observation", required = false)
     protected Response.CurrentObservation currentObservation;
+
+    public ResponseType getResponseType() {
+        if (!isValid()) {
+            return ResponseType.INCORRECT;
+        }
+        if (getCurrentObservation() != null) {
+            return ResponseType.CURRENT_OOBSERVATION;
+        }
+        if (getError() != null) {
+            return ResponseType.ERROR;
+        }
+        if (getResults() != null) {
+            return ResponseType.RESULTS;
+        }
+        return ResponseType.INCORRECT;
+    }
+
+    private boolean isValid() {
+        return getCurrentObservation() != null
+                ^ getResults() != null
+                ^ getError() != null;
+    }
+
+    public enum ResponseType {
+        ERROR, CURRENT_OOBSERVATION, RESULTS, INCORRECT
+    }
 
     @Data
     @XmlAccessorType(XmlAccessType.FIELD)

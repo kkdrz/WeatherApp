@@ -7,7 +7,7 @@ import javax.ws.rs.client.Client;
 public class WundergroundClient {
 
     private static final String API_KEY = "b6bfc129d8a2c4ea";
-    private static final String API_URL = "http://api.wunderground.com/api/" + API_KEY + "/conditions/q/";
+    private static final String API_URL = "http://api.wunderground.com/api/" + API_KEY;
 
     private final Client client;
 
@@ -19,6 +19,10 @@ public class WundergroundClient {
         return getResponse(buildURL(country, city));
     }
 
+    public Response getWeather(String zmw) {
+        return getResponse(buildURL(zmw));
+    }
+    
     private Response getResponse(String URL) {
         return client.target(URL)
                 .request()
@@ -26,8 +30,14 @@ public class WundergroundClient {
     }
 
     private String buildURL(String country, String city) {
-        StringJoiner url = new StringJoiner("/", API_URL, ".xml");
+        StringJoiner url = new StringJoiner("/", API_URL + "/conditions/q/", ".xml");
         url.add(country).add(city);
+        return url.toString();
+    }
+    
+     private String buildURL(String zmw) {
+        StringJoiner url = new StringJoiner("/", API_URL + "/conditions/q/zmw:", ".xml");
+        url.add(zmw);
         return url.toString();
     }
 
