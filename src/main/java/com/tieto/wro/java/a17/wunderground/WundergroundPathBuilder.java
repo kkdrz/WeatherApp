@@ -7,13 +7,14 @@ public class WundergroundPathBuilder {
     
     public String buildPath(String country, String city) {
         StringJoiner url = new StringJoiner("/", "/conditions/q/", ".xml");
-        url.add(country).add(city);
-        return url.toString();
+        if (!country.equals("")) url.add(country);
+        if (!city.equals("")) url.add(city);
+        return url.toString().trim();
     }
 
     public String buildPath(String zmw) {
         StringJoiner url = new StringJoiner("/", "/conditions/q/zmw:", ".xml");
         url.add(zmw);
-        return url.toString();
+        return url.toString().trim();
     }
 }
