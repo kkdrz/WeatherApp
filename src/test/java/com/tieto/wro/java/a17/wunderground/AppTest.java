@@ -12,7 +12,7 @@ import static org.mockito.Mockito.verify;
 
 @RunWith(MockitoJUnitRunner.class)
 public class AppTest {
-    
+
     @Mock
     private WundergroundIO io;
     @Mock
@@ -20,7 +20,7 @@ public class AppTest {
     @Mock
     private WundergroundPathBuilder pathBuilder;
     private final TestObjectProvider provider;
-    
+
     private final String country = "Poland";
     private final String city = "Wroclaw";
     private final String fullPath = "/conditions/q/" + country + "/" + city + ".xml";
@@ -31,14 +31,14 @@ public class AppTest {
     public AppTest() {
         provider = new TestObjectProvider();
     }
-    
+
     @Before
     public void setUp() {
         app = new App(io, client, pathBuilder);
     }
-    
+
     @Test
-    public void When_CountryCityExist_Expect_IOPrintsCurrentObservation () {
+    public void When_CountryCityExist_Expect_IOPrintsCurrentObservation() {
         Response response = provider.getResponse("currentObservation");
         when(io.getCountryFromConsole()).thenReturn(country);
         when(io.getCityFromConsole()).thenReturn(city);
@@ -47,5 +47,5 @@ public class AppTest {
         app.run();
         verify(io).printWeather(response.getCurrentObservation());
     }
-    
+
 }

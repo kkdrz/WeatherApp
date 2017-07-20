@@ -8,7 +8,7 @@ public class TestObjectProvider {
         Response response = new Response();
         switch (kind) {
             case "currentObservation": {
-                response.setCurrentObservation(new Response.CurrentObservation());
+                response.setCurrentObservation(buildCurrentObservation());
                 break;
             }
             case "results": {
@@ -26,5 +26,20 @@ public class TestObjectProvider {
             }
         }
         return response;
+    }
+
+    private Response.CurrentObservation buildCurrentObservation() {
+        Response.CurrentObservation.DisplayLocation dispLoc = new Response.CurrentObservation.DisplayLocation();
+        dispLoc.setFull("Wroclaw, Poland");
+
+        Response.CurrentObservation currObs = new Response.CurrentObservation();
+        currObs.setDisplayLocation(dispLoc);
+        currObs.setTempC("25.3");
+        currObs.setRelativeHumidity("60%");
+        currObs.setWindDir("NE");
+        currObs.setWeather("Partly Cloudy");
+        currObs.setWindString("Calm");
+        currObs.setObservationTime("Last Updated on July 20, 2:48 PM CEST");
+        return currObs;
     }
 }
