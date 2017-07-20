@@ -3,7 +3,6 @@ package com.tieto.wro.java.a17.wunderground;
 import com.tieto.wro.java.a17.wunderground.client.WundergroundClient;
 import com.tieto.wro.java.a17.wunderground.model.Response;
 import com.tieto.wro.java.a17.wunderground.model.Response.Results;
-import java.util.StringJoiner;
 import javax.ws.rs.client.ClientBuilder;
 
 public class App {
@@ -50,7 +49,7 @@ public class App {
 
     public void handleResponse(Response response) {
         switch (response.getResponseType()) {
-            case CURRENT_OOBSERVATION:
+            case CURRENT_OBSERVATION:
                 io.printWeather(response.getCurrentObservation());
                 break;
             case RESULTS:
