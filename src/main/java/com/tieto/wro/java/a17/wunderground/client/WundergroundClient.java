@@ -22,7 +22,7 @@ public class WundergroundClient {
     public Response getWeather(String zmw) {
         return getResponse(buildURL(zmw));
     }
-    
+
     private Response getResponse(String URL) {
         return client.target(URL)
                 .request()
@@ -34,8 +34,8 @@ public class WundergroundClient {
         url.add(country).add(city);
         return url.toString();
     }
-    
-     private String buildURL(String zmw) {
+
+    private String buildURL(String zmw) {
         StringJoiner url = new StringJoiner("/", API_URL + "/conditions/q/zmw:", ".xml");
         url.add(zmw);
         return url.toString();

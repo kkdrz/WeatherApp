@@ -16,7 +16,8 @@ import lombok.Data;
 @XmlRootElement(name = "response")
 public class Response {
 
-    public Response() {}
+    public Response() {
+    }
 
     protected String version;
     @XmlElement(required = true)
