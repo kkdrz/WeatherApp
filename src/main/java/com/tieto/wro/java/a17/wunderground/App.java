@@ -8,12 +8,14 @@ import javax.ws.rs.client.ClientBuilder;
 
 public class App {
 
+    private static final String API_KEY = "b6bfc129d8a2c4ea";
+    private static final String API_URL = "http://api.wunderground.com/api/" + API_KEY;
     private final WundergroundIO io;
     private final WundergroundClient client;
 
     public App() {
         io = new WundergroundIO();
-        client = new WundergroundClient(ClientBuilder.newClient());
+        client = new WundergroundClient(ClientBuilder.newClient(), API_URL);
     }
 
     public static void main(String[] args) {

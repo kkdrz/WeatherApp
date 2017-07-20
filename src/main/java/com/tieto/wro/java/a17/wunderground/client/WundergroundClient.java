@@ -3,16 +3,16 @@ package com.tieto.wro.java.a17.wunderground.client;
 import com.tieto.wro.java.a17.wunderground.model.Response;
 import java.util.StringJoiner;
 import javax.ws.rs.client.Client;
+import javax.ws.rs.core.MediaType;
 
 public class WundergroundClient {
 
-    private static final String API_KEY = "b6bfc129d8a2c4ea";
-    private static final String API_URL = "http://api.wunderground.com/api/" + API_KEY;
-
+    private final String API_URL;
     private final Client client;
 
-    public WundergroundClient(Client client) {
+    public WundergroundClient(Client client, String apiUrl) {
         this.client = client;
+        this.API_URL = apiUrl;
     }
 
     public Response getWeather(String country, String city) {
@@ -25,7 +25,7 @@ public class WundergroundClient {
 
     private Response getResponse(String URL) {
         return client.target(URL)
-                .request()
+                .request(MediaType.APPLICATION_XML)
                 .get(Response.class);
     }
 
