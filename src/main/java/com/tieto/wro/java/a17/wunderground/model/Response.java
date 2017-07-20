@@ -36,7 +36,7 @@ public class Response {
             return ResponseType.INCORRECT;
         }
         if (getCurrentObservation() != null) {
-            return ResponseType.CURRENT_OOBSERVATION;
+            return ResponseType.CURRENT_OBSERVATION;
         }
         if (getError() != null) {
             return ResponseType.ERROR;
@@ -54,7 +54,7 @@ public class Response {
     }
 
     public enum ResponseType {
-        ERROR, CURRENT_OOBSERVATION, RESULTS, INCORRECT
+        ERROR, CURRENT_OBSERVATION, RESULTS, INCORRECT
     }
 
     @Data
