@@ -1,3 +1,5 @@
 /nbproject/
 /target/
 /.settings/
+.classpath
+.project
