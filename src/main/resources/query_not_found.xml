@@ -1,0 +1,12 @@
+
+<response>
+	<version>0.1</version>
+	<termsofService>http://www.wunderground.com/weather/api/d/terms.html</termsofService>
+	<features>
+		<feature>conditions</feature>
+	</features>
+		<error>
+		<type>querynotfound</type>
+		<description>No cities match your search query</description>
+	</error>
+</response>
