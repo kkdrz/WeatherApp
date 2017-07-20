@@ -24,8 +24,6 @@ public class AppTest {
     private final String country = "Poland";
     private final String city = "Wroclaw";
     private final String fullPath = "/conditions/q/" + country + "/" + city + ".xml";
-    private final String cityPath = "/conditions/q/" + city + ".xml";
-    private final String countryPath = "/conditions/q/" + country + ".xml";
     private App app;
 
     public AppTest() {

@@ -1,4 +1,4 @@
-package com.tieto.wro.java.a17.weather;
+package com.tieto.wro.java.a17.weather.model;
 
 import lombok.Data;
 
