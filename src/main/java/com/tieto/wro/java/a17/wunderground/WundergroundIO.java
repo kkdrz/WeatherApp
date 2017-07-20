@@ -1,4 +1,4 @@
-package com.tieto.wro.java.a17.wunderground.client;
+package com.tieto.wro.java.a17.wunderground;
 
 import com.tieto.wro.java.a17.wunderground.model.Response;
 import com.tieto.wro.java.a17.wunderground.model.Response.Results.Result;

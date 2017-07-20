@@ -1,9 +1,9 @@
 package com.tieto.wro.java.a17.wunderground;
 
 import com.tieto.wro.java.a17.wunderground.client.WundergroundClient;
-import com.tieto.wro.java.a17.wunderground.client.WundergroundIO;
 import com.tieto.wro.java.a17.wunderground.model.Response;
 import com.tieto.wro.java.a17.wunderground.model.Response.Results;
+import java.util.StringJoiner;
 import javax.ws.rs.client.ClientBuilder;
 
 public class App {
@@ -12,33 +12,40 @@ public class App {
     private static final String API_URL = "http://api.wunderground.com/api/" + API_KEY;
     private final WundergroundIO io;
     private final WundergroundClient client;
+    private final WundergroundPathBuilder pathBuilder;
 
-    public App() {
-        io = new WundergroundIO();
-        client = new WundergroundClient(ClientBuilder.newClient(), API_URL);
+    public App(WundergroundIO io, WundergroundClient client, WundergroundPathBuilder pathBuilder) {
+        this.io = io;
+        this.client = client;
+        this.pathBuilder = pathBuilder;
     }
 
     public static void main(String[] args) {
-        App app = new App();
-        app.run(null);
+        WundergroundIO io = new WundergroundIO();
+        WundergroundClient client = new WundergroundClient(ClientBuilder.newClient(), API_URL);
+        WundergroundPathBuilder pathBuilder = new WundergroundPathBuilder();
+
+        App app = new App(io, client, pathBuilder);
+        app.run();
     }
 
-    public void run(String zmw) {
-        Response response;
-        if (zmw == null || zmw.equals("")) {
-            response = makeRequest(io.getCountryFromConsole(), io.getCityFromConsole());
-        } else {
-            response = makeRequest(zmw);
-        }
+    public void run() {
+        Response response = makeRequest(io.getCountryFromConsole(), io.getCityFromConsole());
         handleResponse(response);
     }
 
+    public void run(String zmw) {
+        handleResponse(makeRequest(zmw));
+    }
+
     public Response makeRequest(String country, String city) {
-        return client.getWeather(country, city);
+        String path = pathBuilder.buildPath(country, city);
+        return client.getWeather(path);
     }
 
     public Response makeRequest(String zmw) {
-        return client.getWeather(zmw);
+        String path = pathBuilder.buildPath(zmw);
+        return client.getWeather(path);
     }
 
     public void handleResponse(Response response) {
@@ -63,4 +70,5 @@ public class App {
         Results.Result result = io.getResultFromConsole(results);
         run(result.getZmw());
     }
+
 }
