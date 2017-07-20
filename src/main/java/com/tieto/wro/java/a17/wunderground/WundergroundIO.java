@@ -18,13 +18,13 @@ public class WundergroundIO {
     public String getCountryFromConsole() {
         System.out.println("Country: ");
         String country = scanner.nextLine();
-        return country.trim();
+        return country.replaceAll("\\s+","");
     }
 
     public String getCityFromConsole() {
         System.out.println("City: ");
         String city = scanner.nextLine();
-        return city.trim();
+        return city.replaceAll("\\s+","");
     }
 
     public void printIncorrect() {
