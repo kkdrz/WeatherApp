@@ -24,21 +24,23 @@ public class WundergroundClientTest {
     public void tearDown() {
         closeJadler();
     }
-    
+
     private void jadlerRespondWith(String xmlName) throws FileNotFoundException {
         onRequest()
                 .havingMethodEqualTo("GET")
                 .respond()
                 .withContentType("application/xml")
-                .withBody(new FileReader(new File("src/main/resources/" + xmlName +".xml").getAbsolutePath()));
+                .withBody(new FileReader(new File("src/main/resources/" + xmlName + ".xml").getAbsolutePath()));
+    }
+
+    private Response makeRequest() {
+        return new WundergroundClient(ClientBuilder.newClient(), "http://localhost:" + port()).getWeather(PATH);
     }
 
     @Test
     public void When_ValidPathPolandWroclaw_Expect_CorrectResponseMappingCurrentObservation() throws FileNotFoundException {
         jadlerRespondWith("query_poland_wroclaw");
-
-        WundergroundClient client = new WundergroundClient(ClientBuilder.newClient(), "http://localhost:" + port());
-        Response response = client.getWeather(PATH);
+        Response response = makeRequest();
 
         assertNotNull(response.getCurrentObservation());
         assertNull(response.getResults());
@@ -49,9 +51,7 @@ public class WundergroundClientTest {
     @Test
     public void When_ValidPathPolandPila_Expect_CorrectResponseMappingResults() throws FileNotFoundException {
         jadlerRespondWith("query_pila");
-
-        WundergroundClient client = new WundergroundClient(ClientBuilder.newClient(), "http://localhost:" + port());
-        Response response = client.getWeather(PATH);
+        Response response = makeRequest();
 
         assertNotNull(response.getResults());
         assertNull(response.getCurrentObservation());
@@ -61,9 +61,7 @@ public class WundergroundClientTest {
     @Test
     public void When_ValidPathRandomLetters_Expect_CorrectResponseMappingError() throws FileNotFoundException {
         jadlerRespondWith("query_not_found");
-        
-        WundergroundClient client = new WundergroundClient(ClientBuilder.newClient(), "http://localhost:" + port());
-        Response response = client.getWeather(PATH);
+        Response response = makeRequest();
 
         assertNotNull(response.getError());
         assertNull(response.getCurrentObservation());
