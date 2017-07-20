@@ -4,14 +4,10 @@ import com.tieto.wro.java.a17.wunderground.model.Response;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
-import java.nio.file.Files;
-import java.nio.file.Paths;
 import javax.ws.rs.client.ClientBuilder;
 import static net.jadler.Jadler.*;
 import org.junit.After;
-import org.junit.AfterClass;
 import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.Test;
 import static org.junit.Assert.*;
 
@@ -28,16 +24,18 @@ public class WundergroundClientTest {
     public void tearDown() {
         closeJadler();
     }
+    
+    private void jadlerRespondWith(String xmlName) throws FileNotFoundException {
+        onRequest()
+                .havingMethodEqualTo("GET")
+                .respond()
+                .withContentType("application/xml")
+                .withBody(new FileReader(new File("src/main/resources/" + xmlName +".xml").getAbsolutePath()));
+    }
 
     @Test
     public void When_ValidPathPolandWroclaw_Expect_CorrectResponseMappingCurrentObservation() throws FileNotFoundException {
-        onRequest()
-                .havingMethodEqualTo("GET")
-                .havingPathEqualTo(PATH)
-                .havingHeaderEqualTo("Accept", "application/xml")
-                .respond()
-                .withContentType("application/xml")
-                .withBody(new FileReader(new File("src/main/resources/query_poland_wroclaw.xml").getAbsolutePath()));
+        jadlerRespondWith("query_poland_wroclaw");
 
         WundergroundClient client = new WundergroundClient(ClientBuilder.newClient(), "http://localhost:" + port());
         Response response = client.getWeather(PATH);
@@ -50,13 +48,7 @@ public class WundergroundClientTest {
 
     @Test
     public void When_ValidPathPolandPila_Expect_CorrectResponseMappingResults() throws FileNotFoundException {
-        onRequest()
-                .havingMethodEqualTo("GET")
-                .havingPathEqualTo(PATH)
-                .havingHeaderEqualTo("Accept", "application/xml")
-                .respond()
-                .withContentType("application/xml")
-                .withBody(new FileReader(new File("src/main/resources/query_pila.xml").getAbsolutePath()));
+        jadlerRespondWith("query_pila");
 
         WundergroundClient client = new WundergroundClient(ClientBuilder.newClient(), "http://localhost:" + port());
         Response response = client.getWeather(PATH);
@@ -68,14 +60,8 @@ public class WundergroundClientTest {
 
     @Test
     public void When_ValidPathRandomLetters_Expect_CorrectResponseMappingError() throws FileNotFoundException {
-        onRequest()
-                .havingMethodEqualTo("GET")
-                .havingPathEqualTo(PATH)
-                .havingHeaderEqualTo("Accept", "application/xml")
-                .respond()
-                .withContentType("application/xml")
-                .withBody(new FileReader(new File("src/main/resources/query_not_found.xml").getAbsolutePath()));
-
+        jadlerRespondWith("query_not_found");
+        
         WundergroundClient client = new WundergroundClient(ClientBuilder.newClient(), "http://localhost:" + port());
         Response response = client.getWeather(PATH);
 
