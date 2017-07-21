@@ -9,7 +9,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-
 public class WeatherServiceImpl implements WeatherService {
 
     private final WundergroundClient client;
@@ -24,21 +23,25 @@ public class WeatherServiceImpl implements WeatherService {
 
     @Override
     public CityWeather getCityWeather(String city) {
-        if(!supportedCities.contains(city)) return null;
+        if (!supportedCities.contains(city)) {
+            return null;
+        }
         String path = pathBuilder.buildPath("", city);
         Response response = client.getWeather(path);
-        if (response == null) return null;
+        if (response == null) {
+            return null;
+        }
         return transformer.transform(response);
     }
 
     @Override
     public List<CityWeather> getCitiesWeathers() {
-       List<CityWeather> response = new ArrayList<>();
-       for(String city : supportedCities) {
-           response.add(getCityWeather(city));
-       }
-       return response;
+        List<CityWeather> response = new ArrayList<>();
+        for (String city : supportedCities) {
+            response.add(getCityWeather(city));
+        }
+        return response;
     }
-    
+
     private final List<String> supportedCities = Arrays.asList("Wroclaw", "Bialystok", "Czestochowa", "Bielsko-Biala", "Goleniow", "Kolobrzeg");
 }

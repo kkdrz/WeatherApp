@@ -8,7 +8,7 @@ import javax.ws.rs.client.ClientBuilder;
 public class App {
 
     private static final String API_KEY = "b6bfc129d8a2c4ea";
-    private static final String API_URL = "http://api.wunderground.com/api/" + API_KEY;
+    public static final String API_URL = "http://api.wunderground.com/api/" + API_KEY;
     private final WundergroundIO io;
     private final WundergroundClient client;
     private final WundergroundPathBuilder pathBuilder;

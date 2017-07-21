@@ -13,7 +13,6 @@ import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 import static org.mockito.Mockito.when;
-import static org.mockito.Mockito.verify;
 import static org.mockito.Matchers.*;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -42,7 +41,7 @@ public class WeatherServiceImplTest {
     public void When_SupportedCity_Expect_GetCityWeatherReturnsCorrectCW() {
         Response response = new Response();
         CityWeather cityWeather = new CityWeather();
-        when(pathBuilder.buildPath((String)notNull(),(String)notNull())).thenReturn("path");
+        when(pathBuilder.buildPath((String) notNull(), (String) notNull())).thenReturn("path");
         when(client.getWeather("path")).thenReturn(response);
         when(transformer.transform(response)).thenReturn(cityWeather);
 
@@ -71,7 +70,7 @@ public class WeatherServiceImplTest {
     public void When_GetCitiesWeathers_Expect_GetCitiesWeathersReturnsListWithNonNull() {
         Response response = new Response();
         CityWeather cityWeather = new CityWeather();
-        when(pathBuilder.buildPath((String)notNull(), (String)notNull())).thenReturn("path");
+        when(pathBuilder.buildPath((String) notNull(), (String) notNull())).thenReturn("path");
         when(client.getWeather("path")).thenReturn(response);
         when(transformer.transform(response)).thenReturn(cityWeather);
 
