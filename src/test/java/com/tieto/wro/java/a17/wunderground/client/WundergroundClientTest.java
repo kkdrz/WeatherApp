@@ -8,9 +8,9 @@ import javax.ws.rs.client.ClientBuilder;
 import static net.jadler.Jadler.*;
 import net.jadler.stubbing.server.jdk.JdkStubHttpServer;
 import org.junit.After;
+import static org.junit.Assert.*;
 import org.junit.Before;
 import org.junit.Test;
-import static org.junit.Assert.*;
 
 public class WundergroundClientTest {
 
@@ -41,6 +41,7 @@ public class WundergroundClientTest {
     @Test
     public void When_ValidPathPolandWroclaw_Expect_CorrectResponseMappingCurrentObservation() throws FileNotFoundException {
         jadlerRespondWith("query_poland_wroclaw");
+
         Response response = makeRequest();
 
         assertNotNull(response.getCurrentObservation());
@@ -52,6 +53,7 @@ public class WundergroundClientTest {
     @Test
     public void When_ValidPathPolandPila_Expect_CorrectResponseMappingResults() throws FileNotFoundException {
         jadlerRespondWith("query_pila");
+
         Response response = makeRequest();
 
         assertNotNull(response.getResults());
@@ -62,6 +64,7 @@ public class WundergroundClientTest {
     @Test
     public void When_ValidPathRandomLetters_Expect_CorrectResponseMappingError() throws FileNotFoundException {
         jadlerRespondWith("query_not_found");
+
         Response response = makeRequest();
 
         assertNotNull(response.getError());

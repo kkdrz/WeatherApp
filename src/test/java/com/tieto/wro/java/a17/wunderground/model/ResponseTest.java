@@ -1,8 +1,8 @@
 package com.tieto.wro.java.a17.wunderground.model;
 
 import com.tieto.wro.java.a17.wunderground.TestObjectProvider;
-import org.junit.Test;
 import static org.junit.Assert.*;
+import org.junit.Test;
 
 public class ResponseTest {
 
@@ -13,7 +13,7 @@ public class ResponseTest {
     }
 
     @Test
-    public void When_ValidResponse_Expect_isValidTrue() {
+    public void When_ValidResponse_Expect_isValidTrueAndReturnsCorrectResultType() {
         Response response = provider.getResponse("currentObservation");
         assertEquals(response.getResponseType(), Response.ResponseType.CURRENT_OBSERVATION);
 

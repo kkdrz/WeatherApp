@@ -23,12 +23,9 @@ public class WundergroundClient {
     }
 
     public Response getWeather(String path) {
-        return getResponse(API_URL + path);
-    }
-
-    private Response getResponse(String URL) {
-        log.info("Getting response from URL: " + URL);
-        return client.target(URL)
+        log.info("Getting response from URL: " + API_URL + path);
+        return client.target(API_URL)
+                .path(path)
                 .request(MediaType.APPLICATION_XML)
                 .get(Response.class);
     }
