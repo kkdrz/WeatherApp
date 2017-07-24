@@ -10,7 +10,7 @@ public class WundergroundResponseTransformer {
     public CityWeather transform(Response response) {
         log.info("Transforming Response to CityWeather");
         if (response == null || response.getCurrentObservation() == null) {
-            log.warn("Response is null or doesn't provide required informations.");
+            log.warn("Response is null or doesn't provide required informations. It can't be transformed.");
             return null;
         }
         Response.CurrentObservation currObs = response.getCurrentObservation();

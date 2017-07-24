@@ -3,8 +3,8 @@ package com.tieto.wro.java.a17.weather;
 import com.tieto.wro.java.a17.weather.model.CityWeather;
 import com.tieto.wro.java.a17.wunderground.TestObjectProvider;
 import com.tieto.wro.java.a17.wunderground.model.Response;
-import org.junit.Test;
 import static org.junit.Assert.*;
+import org.junit.Test;
 
 public class WundergroundResponseTransformerTest {
 
@@ -20,6 +20,7 @@ public class WundergroundResponseTransformerTest {
     public void When_ResponseHasCurrentObservation_Expect_TransformToCityWeatherCorrect() {
         Response response = provider.getResponse("currentObservation");
         Response.CurrentObservation obs = response.getCurrentObservation();
+
         CityWeather cityWeather = transformer.transform(response);
 
         assertEquals("The same location", obs.getDisplayLocation().getFull(), cityWeather.getLocation());

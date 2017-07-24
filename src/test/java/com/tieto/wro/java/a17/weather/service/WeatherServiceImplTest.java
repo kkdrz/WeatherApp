@@ -6,14 +6,14 @@ import com.tieto.wro.java.a17.wunderground.WundergroundPathBuilder;
 import com.tieto.wro.java.a17.wunderground.client.WundergroundClient;
 import com.tieto.wro.java.a17.wunderground.model.Response;
 import java.util.List;
-import org.junit.Test;
 import static org.junit.Assert.*;
 import org.junit.Before;
+import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.Mock;
-import org.mockito.runners.MockitoJUnitRunner;
-import static org.mockito.Mockito.when;
 import static org.mockito.Matchers.*;
+import org.mockito.Mock;
+import static org.mockito.Mockito.when;
+import org.mockito.runners.MockitoJUnitRunner;
 
 @RunWith(MockitoJUnitRunner.class)
 public class WeatherServiceImplTest {
@@ -29,9 +29,6 @@ public class WeatherServiceImplTest {
     private final String NOT_SUPP_CITY = "City";
     private final String SUPP_CITY = "Wroclaw";
 
-    public WeatherServiceImplTest() {
-    }
-
     @Before
     public void setUp() {
         service = new WeatherServiceImpl(client, transformer, pathBuilder);
@@ -46,6 +43,7 @@ public class WeatherServiceImplTest {
         when(transformer.transform(response)).thenReturn(cityWeather);
 
         CityWeather cwResult = service.getCityWeather(SUPP_CITY);
+
         assertNotNull(cwResult);
         assertEquals(cityWeather, cwResult);
     }
@@ -57,6 +55,7 @@ public class WeatherServiceImplTest {
         when(transformer.transform(null)).thenReturn(null);
 
         CityWeather cwResult = service.getCityWeather(NOT_SUPP_CITY);
+
         assertNull(cwResult);
     }
 
@@ -75,7 +74,9 @@ public class WeatherServiceImplTest {
         when(transformer.transform(response)).thenReturn(cityWeather);
 
         List<CityWeather> cwResult = service.getCitiesWeathers();
+
         assertFalse(cwResult.contains(null));
+        assertFalse(cwResult.isEmpty());
     }
 
 }
