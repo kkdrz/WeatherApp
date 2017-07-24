@@ -15,6 +15,12 @@ public class WeatherServiceImpl implements WeatherService {
     private final WundergroundResponseTransformer transformer;
     private final WundergroundPathBuilder pathBuilder;
 
+    public WeatherServiceImpl(WundergroundClient client) {
+        this.client = client;
+        this.transformer = new WundergroundResponseTransformer();
+        this.pathBuilder = new WundergroundPathBuilder();
+    }
+
     public WeatherServiceImpl(WundergroundClient client, WundergroundResponseTransformer transformer, WundergroundPathBuilder pathBuilder) {
         this.client = client;
         this.transformer = transformer;
@@ -23,6 +29,7 @@ public class WeatherServiceImpl implements WeatherService {
 
     @Override
     public CityWeather getCityWeather(String city) {
+        city = city.toLowerCase();
         if (!supportedCities.contains(city)) {
             return null;
         }
@@ -43,5 +50,5 @@ public class WeatherServiceImpl implements WeatherService {
         return response;
     }
 
-    private final List<String> supportedCities = Arrays.asList("Wroclaw", "Bialystok", "Czestochowa", "Bielsko-Biala", "Goleniow", "Kolobrzeg");
+    private final List<String> supportedCities = Arrays.asList("wroclaw", "bialystok", "czestochowa", "bielsko-biala", "goleniow", "kolobrzeg");
 }

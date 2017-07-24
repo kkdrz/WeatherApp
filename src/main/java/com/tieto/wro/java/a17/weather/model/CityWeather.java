@@ -13,7 +13,8 @@ public class CityWeather {
     private String windString;
     private String weatherDate;
 
-    public CityWeather() {}
+    public CityWeather() {
+    }
 
     public CityWeather(String location, Double temperatureCelsius, String relativeHumidity, String windDirection, String weather, String windString, String weatherDate) {
         this.location = location;
@@ -24,6 +25,5 @@ public class CityWeather {
         this.windString = windString;
         this.weatherDate = weatherDate;
     }
-    
-    
+
 }

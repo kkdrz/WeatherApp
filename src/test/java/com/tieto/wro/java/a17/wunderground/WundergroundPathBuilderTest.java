@@ -1,8 +1,7 @@
 package com.tieto.wro.java.a17.wunderground;
 
-import org.junit.Test;
 import static org.junit.Assert.*;
-import org.junit.BeforeClass;
+import org.junit.Test;
 
 public class WundergroundPathBuilderTest {
 
@@ -29,7 +28,7 @@ public class WundergroundPathBuilderTest {
         String result = builder.buildPath("Country", "");
         assertEquals("/conditions/q/Country.xml", result);
     }
-    
+
     @Test
     public void When_PassZMW_Expect_CorrectPath() {
         String result = builder.buildPath("1234");
