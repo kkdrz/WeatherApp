@@ -23,6 +23,7 @@ public class WeatherControllerImpl implements WeatherController {
     public WeatherControllerImpl() {
         WundergroundClient client = new WundergroundClient(App.API_URL);
         service = new WeatherServiceImpl(client);
+        log.info("WundergroundController instantiated.");
     }
 
     @Override
@@ -59,7 +60,7 @@ public class WeatherControllerImpl implements WeatherController {
                     .build();
         }
 
-        log.info("Mapping entity to JSON.");
+        log.info("Mapping CityWeather entity to JSON.");
         return Response.status(Response.Status.OK)
                 .entity(entity)
                 .build();

@@ -9,7 +9,9 @@ import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.bind.annotation.XmlType;
 import lombok.Data;
+import lombok.extern.log4j.Log4j;
 
+@Log4j
 @Data
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "", propOrder = {"version", "termsofService", "features", "error", "results", "currentObservation"})
@@ -33,21 +35,26 @@ public class Response {
 
     public ResponseType getResponseType() {
         if (!isValid()) {
+            log.info("Response type is: INCORRECT.");
             return ResponseType.INCORRECT;
         }
         if (getCurrentObservation() != null) {
+            log.info("Response type is: CURRENT_OBSERVATION.");
             return ResponseType.CURRENT_OBSERVATION;
         }
         if (getError() != null) {
+            log.info("Response type is: ERROR.");
             return ResponseType.ERROR;
         }
         if (getResults() != null) {
+            log.info("Response type is: RESULTS.");
             return ResponseType.RESULTS;
         }
         return ResponseType.INCORRECT;
     }
 
     private boolean isValid() {
+        log.info("Checking if Response is valid.");
         return getCurrentObservation() != null
                 ^ getResults() != null
                 ^ getError() != null;

@@ -8,7 +8,9 @@ import com.tieto.wro.java.a17.wunderground.model.Response;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import lombok.extern.log4j.Log4j;
 
+@Log4j
 public class WeatherServiceImpl implements WeatherService {
 
     private final WundergroundClient client;
@@ -16,26 +18,29 @@ public class WeatherServiceImpl implements WeatherService {
     private final WundergroundPathBuilder pathBuilder;
 
     public WeatherServiceImpl(WundergroundClient client) {
-        this.client = client;
-        this.transformer = new WundergroundResponseTransformer();
-        this.pathBuilder = new WundergroundPathBuilder();
+        this(client, new WundergroundResponseTransformer(), new WundergroundPathBuilder());
     }
 
     public WeatherServiceImpl(WundergroundClient client, WundergroundResponseTransformer transformer, WundergroundPathBuilder pathBuilder) {
         this.client = client;
         this.transformer = transformer;
         this.pathBuilder = pathBuilder;
+        log.info("WeatherService instantiated.");
     }
 
     @Override
     public CityWeather getCityWeather(String city) {
+        log.info("getCityWeather for \"" + city + "\" invoked.");
         city = city.toLowerCase();
         if (!supportedCities.contains(city)) {
+            log.warn("Requested city (" + city + ") is not supported.");
             return null;
         }
         String path = pathBuilder.buildPath("", city);
+        log.info("Getting Response from WundergroundClient with path: " + path);
         Response response = client.getWeather(path);
         if (response == null) {
+            log.warn("Response from client is null. Requested path: " + path);
             return null;
         }
         return transformer.transform(response);
@@ -43,10 +48,12 @@ public class WeatherServiceImpl implements WeatherService {
 
     @Override
     public List<CityWeather> getCitiesWeathers() {
+        log.info("getCitiesWeathers method invoked.");
         List<CityWeather> response = new ArrayList<>();
         for (String city : supportedCities) {
             response.add(getCityWeather(city));
         }
+        log.info("Returning response: List<CityWeather>");
         return response;
     }
 
