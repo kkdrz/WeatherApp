@@ -25,7 +25,7 @@ public class WeatherServiceImplTest {
     @Mock
     WundergroundPathBuilder pathBuilder;
 
-    private WeatherService service;
+    private WeatherServiceImpl service;
     private final String NOT_SUPP_CITY = "City";
     private final String SUPP_CITY = "Wroclaw";
 

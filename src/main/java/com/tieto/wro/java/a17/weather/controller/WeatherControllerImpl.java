@@ -1,7 +1,6 @@
 package com.tieto.wro.java.a17.weather.controller;
 
 import com.tieto.wro.java.a17.weather.model.CityWeather;
-import com.tieto.wro.java.a17.weather.service.WeatherService;
 import com.tieto.wro.java.a17.weather.service.WeatherServiceImpl;
 import com.tieto.wro.java.a17.wunderground.App;
 import com.tieto.wro.java.a17.wunderground.client.WundergroundClient;
@@ -16,9 +15,9 @@ import lombok.extern.log4j.Log4j;
 
 @Log4j
 @Path("/weather")
-public class WeatherControllerImpl implements WeatherController {
+public class WeatherControllerImpl {
 
-    WeatherService service;
+    WeatherServiceImpl service;
 
     public WeatherControllerImpl() {
         WundergroundClient client = new WundergroundClient(App.API_URL);
@@ -26,7 +25,6 @@ public class WeatherControllerImpl implements WeatherController {
         log.info("WundergroundController instantiated.");
     }
 
-    @Override
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     public Response getCitiesWeathers() {
@@ -46,7 +44,6 @@ public class WeatherControllerImpl implements WeatherController {
                 .build();
     }
 
-    @Override
     @GET
     @Path("/{city}")
     @Produces(MediaType.APPLICATION_JSON)

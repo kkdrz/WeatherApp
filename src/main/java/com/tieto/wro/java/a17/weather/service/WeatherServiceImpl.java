@@ -11,7 +11,7 @@ import java.util.List;
 import lombok.extern.log4j.Log4j;
 
 @Log4j
-public class WeatherServiceImpl implements WeatherService {
+public class WeatherServiceImpl {
 
     private final WundergroundClient client;
     private final WundergroundResponseTransformer transformer;
@@ -28,7 +28,6 @@ public class WeatherServiceImpl implements WeatherService {
         log.info("WeatherService instantiated.");
     }
 
-    @Override
     public CityWeather getCityWeather(String city) {
         log.info("getCityWeather for \"" + city + "\" invoked.");
         city = city.toLowerCase();
@@ -46,7 +45,6 @@ public class WeatherServiceImpl implements WeatherService {
         return transformer.transform(response);
     }
 
-    @Override
     public List<CityWeather> getCitiesWeathers() {
         log.info("getCitiesWeathers method invoked.");
         List<CityWeather> response = new ArrayList<>();
