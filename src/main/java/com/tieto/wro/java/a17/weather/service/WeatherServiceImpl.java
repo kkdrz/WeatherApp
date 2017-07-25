@@ -31,8 +31,7 @@ public class WeatherServiceImpl {
     public CityWeather getCityWeather(String city) {
         log.info("getCityWeather for \"" + city + "\" invoked.");
         city = city.toLowerCase();
-        if (!supportedCities.contains(city)) {
-            log.warn("Requested city (" + city + ") is not supported.");
+        if (isSupported(city)) {
             return null;
         }
         String path = pathBuilder.buildPath("", city);
@@ -43,6 +42,14 @@ public class WeatherServiceImpl {
             return null;
         }
         return transformer.transform(response);
+    }
+
+    private boolean isSupported(String city) {
+        if (!supportedCities.contains(city)) {
+            log.warn("Requested city (" + city + ") is not supported.");
+            return false;
+        }
+        return true;
     }
 
     public List<CityWeather> getCitiesWeathers() {

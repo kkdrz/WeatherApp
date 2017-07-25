@@ -23,9 +23,13 @@ public class WeatherControllerImpl extends ResourceConfig {
 
     public WeatherControllerImpl() {
         packages("com.tieto.wro.java.a17.weather.controller");
+        initWeatherService();
+        log.info("WundergroundController instantiated.");
+    }
+
+    private void initWeatherService() {
         WundergroundClient client = new WundergroundClient(API_URL);
         service = new WeatherServiceImpl(client);
-        log.info("WundergroundController instantiated.");
     }
 
     @GET
@@ -36,15 +40,11 @@ public class WeatherControllerImpl extends ResourceConfig {
 
         if (entities == null || entities.isEmpty()) {
             log.warn("None CityWeather was found.");
-            return Response.status(Response.Status.NOT_FOUND)
-                    .entity("No results could be found.")
-                    .build();
+            return responseNotFound();
         }
 
         log.info("Mapping entities to JSON.");
-        return Response.status(Response.Status.OK)
-                .entity(entities)
-                .build();
+        return responseOK(entities);
     }
 
     @GET
@@ -53,17 +53,25 @@ public class WeatherControllerImpl extends ResourceConfig {
     public Response getCityWeather(@PathParam("city") String city) {
         log.info("getCityWeather request for city: \"" + city + "\" invoked.");
         CityWeather entity = service.getCityWeather(city);
+
         if (entity == null) {
             log.warn("CityWeather for city: \"" + city + "\" couldn't be found - null.");
-            return Response.status(Response.Status.NOT_FOUND)
-                    .entity("No results could be found.")
-                    .build();
+            return responseNotFound();
         }
 
         log.info("Mapping CityWeather entity to JSON.");
+        return responseOK(entity);
+    }
+
+    private Response responseOK(Object entity) {
         return Response.status(Response.Status.OK)
                 .entity(entity)
                 .build();
     }
 
+    private Response responseNotFound() {
+        return Response.status(Response.Status.NOT_FOUND)
+                .entity("No results could be found.")
+                .build();
+    }
 }
