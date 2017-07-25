@@ -13,8 +13,8 @@ public class WundergroundClient {
     private final String API_URL;
     private final Client client;
 
-    public WundergroundClient(String API_URL) {
-        this(ClientBuilder.newClient(), API_URL);
+    public WundergroundClient(String apiUrl) {
+        this(ClientBuilder.newClient(), apiUrl);
     }
 
     public WundergroundClient(Client client, String apiUrl) {

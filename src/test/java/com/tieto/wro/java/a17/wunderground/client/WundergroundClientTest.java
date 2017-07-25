@@ -32,7 +32,7 @@ public class WundergroundClientTest {
                 .havingMethodEqualTo("GET")
                 .respond()
                 .withContentType(MediaType.APPLICATION_XML)
-                .withBody(new FileReader(new File("src/main/resources/" + xmlName + ".xml").getAbsolutePath()));
+                .withBody(new FileReader(new File("src/test/resources/" + xmlName + ".xml").getAbsolutePath()));
     }
 
     private Response makeRequest() {
