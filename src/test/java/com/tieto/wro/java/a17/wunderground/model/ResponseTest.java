@@ -15,16 +15,16 @@ public class ResponseTest {
     @Test
     public void When_ValidResponse_Expect_isValidTrueAndReturnsCorrectResultType() {
         Response response = provider.getResponse("currentObservation");
-        assertEquals(response.getResponseType(), Response.ResponseType.CURRENT_OBSERVATION);
+        assertEquals(Response.ResponseType.CURRENT_OBSERVATION, response.getResponseType());
 
         response = provider.getResponse("results");
-        assertEquals(response.getResponseType(), Response.ResponseType.RESULTS);
+        assertEquals(Response.ResponseType.RESULTS, response.getResponseType());
 
         response = provider.getResponse("error");
-        assertEquals(response.getResponseType(), Response.ResponseType.ERROR);
+        assertEquals(Response.ResponseType.ERROR, response.getResponseType());
 
         response = provider.getResponse("incorrect");
-        assertEquals(response.getResponseType(), Response.ResponseType.INCORRECT);
+        assertEquals(Response.ResponseType.INCORRECT, response.getResponseType());
 
     }
 }

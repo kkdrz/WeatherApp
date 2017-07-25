@@ -31,7 +31,7 @@ public class WeatherServiceImpl {
     public CityWeather getCityWeather(String city) {
         log.info("getCityWeather for \"" + city + "\" invoked.");
         city = city.toLowerCase();
-        if (isSupported(city)) {
+        if (!isSupported(city)) {
             return null;
         }
         String path = pathBuilder.buildPath("", city);
