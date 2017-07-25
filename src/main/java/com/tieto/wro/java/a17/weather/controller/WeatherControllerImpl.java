@@ -4,6 +4,7 @@ import com.tieto.wro.java.a17.weather.model.CityWeather;
 import com.tieto.wro.java.a17.weather.service.WeatherServiceImpl;
 import com.tieto.wro.java.a17.wunderground.client.WundergroundClient;
 import java.util.List;
+import javax.ws.rs.ApplicationPath;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
@@ -15,6 +16,7 @@ import org.glassfish.jersey.server.ResourceConfig;
 
 @Log4j
 @Path("/weather")
+@ApplicationPath("")
 public class WeatherControllerImpl extends ResourceConfig {
 
     WeatherServiceImpl service;
