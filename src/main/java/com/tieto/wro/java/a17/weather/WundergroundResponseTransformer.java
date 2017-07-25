@@ -15,14 +15,15 @@ public class WundergroundResponseTransformer {
         }
         Response.CurrentObservation currObs = response.getCurrentObservation();
 
-        CityWeather cw = new CityWeather(
-                currObs.getDisplayLocation().getFull(),
-                Double.parseDouble(currObs.getTempC()),
-                currObs.getRelativeHumidity(),
-                currObs.getWindDir(),
-                currObs.getWeather(),
-                currObs.getWindString(),
-                currObs.getObservationTime());
+        CityWeather cw = new CityWeather();
+        cw.setLocation(currObs.getDisplayLocation().getFull());
+        cw.setRelativeHumidity(currObs.getRelativeHumidity());
+        cw.setTemperatureCelsius(Double.parseDouble(currObs.getTempC()));
+        cw.setWeather(currObs.getWeather());
+        cw.setWeatherDate(currObs.getObservationTime());
+        cw.setWindDirection(currObs.getWindDir());
+        cw.setWindString(currObs.getWindString());
+
         log.info("Transforming Response to CityWeather completed.");
         return cw;
     }
