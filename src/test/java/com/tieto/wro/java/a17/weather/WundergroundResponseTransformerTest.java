@@ -32,4 +32,21 @@ public class WundergroundResponseTransformerTest {
         assertEquals("The same weatherDate", obs.getObservationTime(), cityWeather.getWeatherDate());
     }
 
+    @Test
+    public void When_ResponseHasError_Expect_TransformReturnsNull() {
+        Response response = provider.getResponse("error");
+
+        CityWeather cityWeather = transformer.transform(response);
+
+        assertNull(cityWeather);
+    }
+
+    @Test
+    public void When_ResponseHasResults_Expect_TransformReturnsNull() {
+        Response response = provider.getResponse("results");
+
+        CityWeather cityWeather = transformer.transform(response);
+
+        assertNull(cityWeather);
+    }
 }
