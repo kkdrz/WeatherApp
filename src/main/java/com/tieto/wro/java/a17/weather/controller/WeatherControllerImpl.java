@@ -2,7 +2,6 @@ package com.tieto.wro.java.a17.weather.controller;
 
 import com.tieto.wro.java.a17.weather.model.CityWeather;
 import com.tieto.wro.java.a17.weather.service.WeatherServiceImpl;
-import com.tieto.wro.java.a17.wunderground.App;
 import com.tieto.wro.java.a17.wunderground.client.WundergroundClient;
 import java.util.List;
 import javax.ws.rs.GET;
@@ -12,15 +11,19 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import lombok.extern.log4j.Log4j;
+import org.glassfish.jersey.server.ResourceConfig;
 
 @Log4j
 @Path("/weather")
-public class WeatherControllerImpl {
+public class WeatherControllerImpl extends ResourceConfig {
 
     WeatherServiceImpl service;
+    private static final String API_KEY = "b6bfc129d8a2c4ea";
+    private static final String API_URL = "http://api.wunderground.com/api/" + API_KEY;
 
     public WeatherControllerImpl() {
-        WundergroundClient client = new WundergroundClient(App.API_URL);
+        packages("com.tieto.wro.java.a17.weather.controller");
+        WundergroundClient client = new WundergroundClient(API_URL);
         service = new WeatherServiceImpl(client);
         log.info("WundergroundController instantiated.");
     }
