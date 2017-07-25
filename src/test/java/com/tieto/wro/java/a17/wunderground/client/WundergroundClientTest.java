@@ -5,6 +5,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import javax.ws.rs.client.ClientBuilder;
+import javax.ws.rs.core.MediaType;
 import static net.jadler.Jadler.*;
 import net.jadler.stubbing.server.jdk.JdkStubHttpServer;
 import org.junit.After;
@@ -30,7 +31,7 @@ public class WundergroundClientTest {
         onRequest()
                 .havingMethodEqualTo("GET")
                 .respond()
-                .withContentType("application/xml")
+                .withContentType(MediaType.APPLICATION_XML)
                 .withBody(new FileReader(new File("src/main/resources/" + xmlName + ".xml").getAbsolutePath()));
     }
 

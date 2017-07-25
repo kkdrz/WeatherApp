@@ -9,6 +9,7 @@ import static org.junit.Assert.*;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.Matchers;
 import org.mockito.Mock;
 import static org.mockito.Mockito.when;
 import org.mockito.runners.MockitoJUnitRunner;
@@ -34,7 +35,7 @@ public class WeatherServiceImplTest {
     public void When_SupportedCity_Expect_GetCityWeatherReturnsCorrectCW() {
         Response response = new Response();
         CityWeather cityWeather = new CityWeather();
-        when(client.getWeather("country", "city")).thenReturn(response);
+        when(client.getWeather("Poland", SUPP_CITY.toLowerCase())).thenReturn(response);
         when(transformer.transform(response)).thenReturn(cityWeather);
 
         CityWeather cwResult = service.getCityWeather(SUPP_CITY);
@@ -45,7 +46,7 @@ public class WeatherServiceImplTest {
 
     @Test
     public void When_CityDoesntExist_Expect_GetCityWeatherReturnsNull() {
-        when(client.getWeather("country", "city")).thenReturn(null);
+        when(client.getWeather("Poland", SUPP_CITY.toLowerCase())).thenReturn(null);
         when(transformer.transform(null)).thenReturn(null);
 
         CityWeather cwResult = service.getCityWeather(NOT_SUPP_CITY);
@@ -63,7 +64,7 @@ public class WeatherServiceImplTest {
     public void When_GetCitiesWeathers_Expect_GetCitiesWeathersReturnsListWithNonNull() {
         Response response = new Response();
         CityWeather cityWeather = new CityWeather();
-        when(client.getWeather("country", "city")).thenReturn(response);
+        when(client.getWeather(Matchers.anyString(), Matchers.anyString())).thenReturn(response);
         when(transformer.transform(response)).thenReturn(cityWeather);
 
         List<CityWeather> cwResult = service.getCitiesWeathers();
