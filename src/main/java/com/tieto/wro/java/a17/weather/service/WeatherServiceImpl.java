@@ -2,7 +2,6 @@ package com.tieto.wro.java.a17.weather.service;
 
 import com.tieto.wro.java.a17.weather.WundergroundResponseTransformer;
 import com.tieto.wro.java.a17.weather.model.CityWeather;
-import com.tieto.wro.java.a17.wunderground.WundergroundPathBuilder;
 import com.tieto.wro.java.a17.wunderground.client.WundergroundClient;
 import com.tieto.wro.java.a17.wunderground.model.Response;
 import java.util.ArrayList;
@@ -15,16 +14,14 @@ public class WeatherServiceImpl {
 
     private final WundergroundClient client;
     private final WundergroundResponseTransformer transformer;
-    private final WundergroundPathBuilder pathBuilder;
 
     public WeatherServiceImpl(WundergroundClient client) {
-        this(client, new WundergroundResponseTransformer(), new WundergroundPathBuilder());
+        this(client, new WundergroundResponseTransformer());
     }
 
-    public WeatherServiceImpl(WundergroundClient client, WundergroundResponseTransformer transformer, WundergroundPathBuilder pathBuilder) {
+    public WeatherServiceImpl(WundergroundClient client, WundergroundResponseTransformer transformer) {
         this.client = client;
         this.transformer = transformer;
-        this.pathBuilder = pathBuilder;
         log.info("WeatherService instantiated.");
     }
 
@@ -34,11 +31,9 @@ public class WeatherServiceImpl {
         if (!isSupported(city)) {
             return null;
         }
-        String path = pathBuilder.buildPath("", city);
-        log.info("Getting Response from WundergroundClient with path: " + path);
-        Response response = client.getWeather(path);
+        Response response = client.getWeather("Poland", city);
         if (response == null) {
-            log.warn("Response from client is null. Requested path: " + path);
+            log.warn("Response from client is null. Requested city: " + city);
             return null;
         }
         return transformer.transform(response);
