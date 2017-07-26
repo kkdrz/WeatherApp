@@ -25,7 +25,9 @@ public class WundergroundClient {
 
     public Response getWeather(String country, String city) {
         String URI = getUri(country, city);
-        return getResponse(URI);
+        Response response = getResponse(URI);
+        log.info("Response received.");
+        return response;
     }
 
     public Response getWeather(String zmw) {

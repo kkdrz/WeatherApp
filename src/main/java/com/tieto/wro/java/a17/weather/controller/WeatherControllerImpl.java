@@ -21,7 +21,7 @@ public class WeatherControllerImpl extends ResourceConfig {
 
     WeatherServiceImpl service;
     private static final String API_KEY = "b6bfc129d8a2c4ea";
-    private static final String API_URL = "http://api.wunderground.com/api/" + API_KEY;
+    private static final String API_URL = "http://localhost:8089/api.wunderground.com/api/" + API_KEY;
 
     public WeatherControllerImpl() {
         packages("com.tieto.wro.java.a17.weather.controller");
