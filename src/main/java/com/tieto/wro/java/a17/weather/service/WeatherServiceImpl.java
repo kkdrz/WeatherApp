@@ -57,5 +57,5 @@ public class WeatherServiceImpl {
         return response;
     }
 
-    private final List<String> supportedCities = Arrays.asList("wroclaw", "bialystok", "czestochowa", "bielsko-biala", "goleniow", "kolobrzeg");
+    private final List<String> supportedCities = Arrays.asList("wroclaw", "bialystok", "czestochowa", "bielsko-biala", "goleniow");
 }

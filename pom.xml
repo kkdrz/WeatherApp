@@ -8,6 +8,13 @@
     <name>wundergroundWebApp Maven Webapp</name>
     <url>http://maven.apache.org</url>
   
+    <pluginRepositories>
+        <pluginRepository>
+            <id>smartbear-sweden-plugin-repository</id>
+            <url>http://www.soapui.org/repository/maven2/</url>
+        </pluginRepository>
+    </pluginRepositories>
+  
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <jersey.version>2.25.1</jersey.version>
@@ -20,6 +27,7 @@
         <maven.compiler.target>1.8</maven.compiler.target>
         <jetty.version>9.4.6.v20170531</jetty.version>
         <log4j.version>1.2.17</log4j.version>
+        <soapUI.version>4.6.1</soapUI.version>
     </properties>
     
     <build>
@@ -42,6 +50,27 @@
                 <configuration>
                     <failOnMissingWebXml>false</failOnMissingWebXml>
                 </configuration>
+            </plugin>
+            
+            <plugin>
+                <groupId>com.smartbear.soapui</groupId>
+                <artifactId>soapui-maven-plugin</artifactId>
+                <version>${soapUI.version}</version>
+                <configuration>
+                    <projectFile>src/test/resources/soapUI_test.xml</projectFile>
+                   
+                </configuration>
+                <executions>
+                    <execution>
+                        <phase>test</phase>
+                        <goals>
+                            <goal>test</goal>
+                        </goals>
+                        <configuration>
+                            <projectFile>src/test/resources/soapUI_test.xml</projectFile>
+                        </configuration>
+                    </execution>
+                </executions>
             </plugin>
         </plugins>
     </build>

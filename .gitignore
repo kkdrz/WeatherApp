@@ -5,3 +5,7 @@
 .project
 nb-configuration.xml
 nbactions.xml
+soapui.txt
+soapui-errors.txt
+*.txt
+*.log
