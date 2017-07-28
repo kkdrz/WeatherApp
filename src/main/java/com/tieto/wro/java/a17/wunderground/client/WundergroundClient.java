@@ -1,6 +1,7 @@
 package com.tieto.wro.java.a17.wunderground.client;
 
 import com.tieto.wro.java.a17.wunderground.model.Response;
+import javax.ws.rs.NotFoundException;
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.ClientBuilder;
 import javax.ws.rs.core.MediaType;
@@ -35,21 +36,28 @@ public class WundergroundClient {
 
 	private Response getResponse(String uri) {
 		log.info("Getting response from URL: " + uri);
-		Response response = client.target(uri)
-				.request(MediaType.APPLICATION_XML)
-				.get(Response.class);
+		Response response = new Response();
+		try {
+			response = client.target(uri)
+					.request(MediaType.APPLICATION_XML)
+					.get(Response.class);
+		} catch (NotFoundException e) {
+			log.error("Response from URL: " + uri + " not found.");
+			return response;
+		}
+
 		log.info("Response received.");
 		return response;
 	}
 
-	private String getUri(String country, String city) {
+	protected String getUri(String country, String city) {
 		return UriBuilder.fromPath(API_URL)
 				.path("/conditions/q/{country}/{city}.xml")
 				.build(country, city)
 				.toString();
 	}
 
-	private String getUri(String zmw) {
+	protected String getUri(String zmw) {
 		return UriBuilder.fromPath(API_URL)
 				.path("/conditions/q/zmw:{zmw}.xml")
 				.build(zmw)

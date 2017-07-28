@@ -3,6 +3,7 @@ package com.tieto.wro.java.a17.weather.controller;
 import com.tieto.wro.java.a17.weather.model.CityWeather;
 import com.tieto.wro.java.a17.weather.service.WeatherServiceImpl;
 import com.tieto.wro.java.a17.wunderground.client.WundergroundClient;
+import java.util.Collection;
 import java.util.List;
 import javax.ws.rs.ApplicationPath;
 import javax.ws.rs.GET;
@@ -19,10 +20,12 @@ import org.glassfish.jersey.server.ResourceConfig;
 @ApplicationPath("")
 public class WeatherControllerImpl extends ResourceConfig {
 
-	WeatherServiceImpl service;
+	
 	private static final String API_KEY = "b6bfc129d8a2c4ea";
 	private static final String API_URL = "http://localhost:8089/api.wunderground.com/api/" + API_KEY;
-
+	
+	private WeatherServiceImpl service;
+	
 	public WeatherControllerImpl() {
 		packages("com.tieto.wro.java.a17.weather.controller");
 		initWeatherService();
@@ -40,13 +43,17 @@ public class WeatherControllerImpl extends ResourceConfig {
 		log.info("getCitiesWeathers request invoked.");
 		List<CityWeather> entities = service.getCitiesWeathers();
 
-		if (entities == null || entities.isEmpty()) {
+		if (isNullOrEmpty(entities)) {
 			log.warn("None CityWeather was found.");
 			return responseNotFound();
 		}
 
 		log.info("Mapping entities to JSON.");
 		return responseOK(entities);
+	}
+
+	private static <T> boolean isNullOrEmpty(Collection<T> entities) {
+		return entities == null || entities.isEmpty();
 	}
 
 	@GET

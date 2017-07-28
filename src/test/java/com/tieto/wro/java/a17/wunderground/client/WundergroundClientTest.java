@@ -15,11 +15,16 @@ import org.junit.Test;
 
 public class WundergroundClientTest {
 
-	private final String PATH = "/conditions/q/Poland/Wroclaw.xml";
+	private final String PATH = "/conditions/q/";
+
+	private String API_URL;
+	private WundergroundClient client;
 
 	@Before
 	public void setUp() {
 		initJadlerUsing(new JdkStubHttpServer());
+		API_URL = "http://localhost:" + port();
+		client = new WundergroundClient(ClientBuilder.newClient(), API_URL);
 	}
 
 	@After
@@ -27,50 +32,119 @@ public class WundergroundClientTest {
 		closeJadler();
 	}
 
-	private void jadlerRespondWith(String xmlName) throws FileNotFoundException {
+	private void jadlerRespondWith(String country, String city, String xmlName) throws FileNotFoundException {
 		onRequest()
 				.havingMethodEqualTo("GET")
+				.havingPathEqualTo(PATH + country + "/" + city + ".xml")
 				.respond()
 				.withContentType(MediaType.APPLICATION_XML)
 				.withBody(new FileReader(new File("src/test/resources/" + xmlName + ".xml").getAbsolutePath()));
 	}
 
-	private Response makeRequest() {
-		return new WundergroundClient(ClientBuilder.newClient(), "http://localhost:" + port()).getWeather(PATH);
-	}
-
 	@Test
 	public void When_ValidPathPolandWroclaw_Expect_CorrectResponseMappingCurrentObservation() throws FileNotFoundException {
-		jadlerRespondWith("query_poland_wroclaw");
+		String country = "Poland";
+		String city = "Wroclaw";
+		jadlerRespondWith(country, city, "query_poland_wroclaw");
 
-		Response response = makeRequest();
+		Response response = client.getWeather(country, city);
 
-		assertNotNull(response.getCurrentObservation());
-		assertNull(response.getResults());
-		assertNull(response.getError());
+		assertHasCurrentObservation(response);
 
 	}
 
 	@Test
 	public void When_ValidPathPolandPila_Expect_CorrectResponseMappingResults() throws FileNotFoundException {
-		jadlerRespondWith("query_pila");
+		String country = "Poland";
+		String city = "Pila";
+		jadlerRespondWith(country, city, "query_pila");
 
-		Response response = makeRequest();
+		Response response = client.getWeather(country, city);
 
-		assertNotNull(response.getResults());
-		assertNull(response.getCurrentObservation());
-		assertNull(response.getError());
+		assertHasResults(response);
 	}
 
 	@Test
-	public void When_ValidPathRandomLetters_Expect_CorrectResponseMappingError() throws FileNotFoundException {
-		jadlerRespondWith("query_not_found");
+	public void When_ValidPathNotExistingCity_Expect_CorrectResponseMappingError() throws FileNotFoundException {
+		String country = "Poland";
+		String city = "NotExistingCity";
+		jadlerRespondWith(country, city, "query_not_found");
 
-		Response response = makeRequest();
+		Response response = client.getWeather(country, city);
 
+		assertHasError(response);
+	}
+
+	@Test
+	public void When_InvalidPath_Expect_IncorrectResponse() throws FileNotFoundException {
+		String country = "Poland";
+		String city = "Wroclaw";
+		jadlerRespondWith(country, city, "query_not_found");
+
+		Response response = client.getWeather(country, "WrongCity/ShuldNotFind");
+
+		assertIsIncorrect(response);
+	}
+
+	@Test
+	public void When_CityAndCountryNotEmpty_Expect_GetUriReturnsCorrectUri() {
+		String country = "Poland";
+		String city = "Wroclaw";
+		String expectedUri = API_URL + "/conditions/q/Poland/Wroclaw.xml";
+
+		String actualUri = client.getUri(country, city);
+
+		assertTrue(actualUri.equals(expectedUri));
+	}
+
+	@Test
+	public void When_CountryEmpty_Expect_GetUriReturnsCorrectUri() {
+		String country = "";
+		String city = "Wroclaw";
+		String expectedUri = API_URL + "/conditions/q//Wroclaw.xml";
+
+		String actualUri = client.getUri(country, city);
+
+		assertTrue(actualUri.equals(expectedUri));
+	}
+
+	@Test(expected = IllegalArgumentException.class)
+	public void When_CountryNull_Expect_ThrowsIllegalArgumentException() {
+		String country = null;
+		String city = "Wroclaw";
+
+		client.getUri(country, city);
+	}
+
+	@Test(expected = IllegalArgumentException.class)
+	public void When_CityNull_Expect_ThrowsIllegalArgumentException() {
+		String country = "Poland";
+		String city = null;
+
+		client.getUri(country, city);
+	}
+
+	private void assertIsIncorrect(Response response) {
+		assertNull(response.getError());
+		assertNull(response.getCurrentObservation());
+		assertNull(response.getResults());
+	}
+
+	private void assertHasError(Response response) {
 		assertNotNull(response.getError());
 		assertNull(response.getCurrentObservation());
 		assertNull(response.getResults());
 	}
 
+	private void assertHasResults(Response response) {
+		assertNotNull(response.getResults());
+		assertNull(response.getCurrentObservation());
+		assertNull(response.getError());
+	}
+
+	private void assertHasCurrentObservation(Response response) {
+		assertNotNull(response.getCurrentObservation());
+		assertNull(response.getResults());
+		assertNull(response.getError());
+	}
 }
