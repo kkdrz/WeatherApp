@@ -6,25 +6,25 @@ import org.junit.Test;
 
 public class ResponseTest {
 
-    TestObjectProvider provider;
+	TestObjectProvider provider;
 
-    public ResponseTest() {
-        provider = new TestObjectProvider();
-    }
+	public ResponseTest() {
+		provider = new TestObjectProvider();
+	}
 
-    @Test
-    public void When_ValidResponse_Expect_isValidTrueAndReturnsCorrectResultType() {
-        Response response = provider.getResponse("currentObservation");
-        assertEquals(Response.ResponseType.CURRENT_OBSERVATION, response.getResponseType());
+	@Test
+	public void When_ValidResponse_Expect_isValidTrueAndReturnsCorrectResultType() {
+		Response response = provider.getResponse("currentObservation");
+		assertEquals(Response.ResponseType.CURRENT_OBSERVATION, response.getResponseType());
 
-        response = provider.getResponse("results");
-        assertEquals(Response.ResponseType.RESULTS, response.getResponseType());
+		response = provider.getResponse("results");
+		assertEquals(Response.ResponseType.RESULTS, response.getResponseType());
 
-        response = provider.getResponse("error");
-        assertEquals(Response.ResponseType.ERROR, response.getResponseType());
+		response = provider.getResponse("error");
+		assertEquals(Response.ResponseType.ERROR, response.getResponseType());
 
-        response = provider.getResponse("incorrect");
-        assertEquals(Response.ResponseType.INCORRECT, response.getResponseType());
+		response = provider.getResponse("incorrect");
+		assertEquals(Response.ResponseType.INCORRECT, response.getResponseType());
 
-    }
+	}
 }

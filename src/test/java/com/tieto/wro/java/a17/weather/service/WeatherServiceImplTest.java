@@ -17,60 +17,60 @@ import org.mockito.runners.MockitoJUnitRunner;
 @RunWith(MockitoJUnitRunner.class)
 public class WeatherServiceImplTest {
 
-    @Mock
-    WundergroundClient client;
-    @Mock
-    WundergroundResponseTransformer transformer;
+	@Mock
+	WundergroundClient client;
+	@Mock
+	WundergroundResponseTransformer transformer;
 
-    private WeatherServiceImpl service;
-    private final String NOT_SUPP_CITY = "City";
-    private final String SUPP_CITY = "Wroclaw";
+	private WeatherServiceImpl service;
+	private final String NOT_SUPP_CITY = "City";
+	private final String SUPP_CITY = "Wroclaw";
 
-    @Before
-    public void setUp() {
-        service = new WeatherServiceImpl(client, transformer);
-    }
+	@Before
+	public void setUp() {
+		service = new WeatherServiceImpl(client, transformer);
+	}
 
-    @Test
-    public void When_SupportedCity_Expect_GetCityWeatherReturnsCorrectCW() {
-        Response response = new Response();
-        CityWeather cityWeather = new CityWeather();
-        when(client.getWeather("Poland", SUPP_CITY.toLowerCase())).thenReturn(response);
-        when(transformer.transform(response)).thenReturn(cityWeather);
+	@Test
+	public void When_SupportedCity_Expect_GetCityWeatherReturnsCorrectCW() {
+		Response response = new Response();
+		CityWeather cityWeather = new CityWeather();
+		when(client.getWeather("Poland", SUPP_CITY.toLowerCase())).thenReturn(response);
+		when(transformer.transform(response)).thenReturn(cityWeather);
 
-        CityWeather cwResult = service.getCityWeather(SUPP_CITY);
+		CityWeather cwResult = service.getCityWeather(SUPP_CITY);
 
-        assertNotNull(cwResult);
-        assertEquals(cityWeather, cwResult);
-    }
+		assertNotNull(cwResult);
+		assertEquals(cityWeather, cwResult);
+	}
 
-    @Test
-    public void When_CityDoesntExist_Expect_GetCityWeatherReturnsNull() {
-        when(client.getWeather("Poland", SUPP_CITY.toLowerCase())).thenReturn(null);
-        when(transformer.transform(null)).thenReturn(null);
+	@Test
+	public void When_CityDoesntExist_Expect_GetCityWeatherReturnsNull() {
+		when(client.getWeather("Poland", SUPP_CITY.toLowerCase())).thenReturn(null);
+		when(transformer.transform(null)).thenReturn(null);
 
-        CityWeather cwResult = service.getCityWeather(NOT_SUPP_CITY);
+		CityWeather cwResult = service.getCityWeather(NOT_SUPP_CITY);
 
-        assertNull(cwResult);
-    }
+		assertNull(cwResult);
+	}
 
-    @Test
-    public void When_NotSupportedCity_Expect_GetCityWeatherReturnsNull() {
-        CityWeather cwResult = service.getCityWeather(NOT_SUPP_CITY);
-        assertNull(cwResult);
-    }
+	@Test
+	public void When_NotSupportedCity_Expect_GetCityWeatherReturnsNull() {
+		CityWeather cwResult = service.getCityWeather(NOT_SUPP_CITY);
+		assertNull(cwResult);
+	}
 
-    @Test
-    public void When_GetCitiesWeathers_Expect_GetCitiesWeathersReturnsListWithNonNull() {
-        Response response = new Response();
-        CityWeather cityWeather = new CityWeather();
-        when(client.getWeather(Matchers.anyString(), Matchers.anyString())).thenReturn(response);
-        when(transformer.transform(response)).thenReturn(cityWeather);
+	@Test
+	public void When_GetCitiesWeathers_Expect_GetCitiesWeathersReturnsListWithNonNull() {
+		Response response = new Response();
+		CityWeather cityWeather = new CityWeather();
+		when(client.getWeather(Matchers.anyString(), Matchers.anyString())).thenReturn(response);
+		when(transformer.transform(response)).thenReturn(cityWeather);
 
-        List<CityWeather> cwResult = service.getCitiesWeathers();
+		List<CityWeather> cwResult = service.getCitiesWeathers();
 
-        assertFalse(cwResult.contains(null));
-        assertFalse(cwResult.isEmpty());
-    }
+		assertFalse(cwResult.contains(null));
+		assertFalse(cwResult.isEmpty());
+	}
 
 }
