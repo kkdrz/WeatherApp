@@ -36,14 +36,14 @@ public class WundergroundClient {
 
 	private Response getResponse(String uri) {
 		log.info("Getting response from URL: " + uri);
-		Response response = new Response();
+		Response response;
 		try {
 			response = client.target(uri)
 					.request(MediaType.APPLICATION_XML)
 					.get(Response.class);
 		} catch (NotFoundException e) {
 			log.error("Response from URL: " + uri + " not found.");
-			return response;
+			return null;
 		}
 
 		log.info("Response received.");
