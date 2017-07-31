@@ -8,6 +8,7 @@ import com.tieto.wro.java.a17.wunderground.client.WundergroundClient;
 import com.tieto.wro.java.a17.wunderground.model.Response;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import lombok.extern.log4j.Log4j;
 
 @Log4j
@@ -48,18 +49,18 @@ public class WeatherServiceImpl {
 	}
 
 	private City findCityByName(String cityName) {
-		return supportedCities.stream()
+		Optional<City> city = supportedCities.stream()
 				.filter(c -> cityName.equals(c.getName()))
-				.findFirst()
-				.get();
+				.findFirst();
+		return city.isPresent() ? city.get() : null;
 	}
 
 	public List<CityWeather> getCitiesWeathers() {
 		log.info("getCitiesWeathers method invoked.");
 		List<CityWeather> response = new ArrayList<>();
-		for (City city : supportedCities) {
+		supportedCities.forEach((city) -> {
 			response.add(getCityWeatherById(city.getId()));
-		}
+		});
 		log.info("Returning response: List<CityWeather>");
 		return response;
 	}
