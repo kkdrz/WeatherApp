@@ -25,7 +25,7 @@ public class WeatherServiceImpl {
 		this.client = client;
 		this.transformer = transformer;
 		SupportedCitiesProvider provider = new SupportedCitiesProvider();
-		this.supportedCities = provider.getSupportedCities("src/main/resources/cities_objects.json");
+		this.supportedCities = provider.getSupportedCitiesList("src/main/resources/cities_objects.json");
 		log.info("WeatherService instantiated.");
 	}
 
