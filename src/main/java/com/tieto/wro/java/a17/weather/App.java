@@ -15,9 +15,13 @@ public class App extends ResourceConfig {
 	
 	public App() {
 		packages("com.tieto.wro.java.a17.weather.controller");
+		loadSupportedCities();
+	}
+
+	private void loadSupportedCities() {
 		SUPPORTED_CITIES = new SupportedCitiesProvider().getSupportedCities(CITIES_JSON_PATH);
 		if (SUPPORTED_CITIES == null || SUPPORTED_CITIES.isEmpty()) {
-			log.error("There is no cities in SUPPORTED_CITY. Check if path is correct and if JSON file exists.");
+			log.error("There is no cities in SUPPORTED_CITY. Check if path (" + CITIES_JSON_PATH + ") is correct and if JSON file exists.");
 		}
 	}
 	

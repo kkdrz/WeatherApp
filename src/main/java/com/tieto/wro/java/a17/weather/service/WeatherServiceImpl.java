@@ -24,7 +24,7 @@ public class WeatherServiceImpl {
 		this.client = client;
 		this.transformer = transformer;
 		this.supportedCities = supportedCities;
-		log.info("WeatherService instantiated with supported cities: " + supportedCities);
+		log.info("WeatherService instantiated with supported cities:\n" + supportedCities);
 	}
 
 	public CityWeather getCityWeather(String cityName) {

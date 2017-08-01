@@ -24,7 +24,7 @@ public class WeatherControllerImpl {
 
 	public WeatherControllerImpl() {
 		initWeatherService();
-		log.info("WundergroundController instantiated.");
+		log.info("WundergroundController instantiated with API_URL: \n" + API_URL);
 	}
 
 	private void initWeatherService() {
