@@ -32,4 +32,18 @@ public class SupportedCitiesProviderTest {
 		assertTrue(!cities.isEmpty());
 	}
 
+	@Test
+	public void When_MapIsCorrect_Expect_TransformMapToListReturnsListOfCities() {
+		Map<String, String> map = provider.getSupportedCitiesMap("src/test/resources/cities.json");
+		map.put("wroclaw", "00000.7.12424");
+		map.put("lodz", "00000.7.234234");
+		map.put("khykyh", "01231.213433");
+		
+		List<City> list = provider.transformMapToList(map);
+		
+		assertNotNull(list);
+		assertTrue(!list.isEmpty());
+		assertTrue(map.get("wroclaw").equals(list.get(0).getId()));
+	}
+
 }

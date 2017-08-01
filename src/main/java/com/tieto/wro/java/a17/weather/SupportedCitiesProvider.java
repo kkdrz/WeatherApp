@@ -15,13 +15,17 @@ import lombok.extern.log4j.Log4j;
 @Log4j
 public class SupportedCitiesProvider {
 
-	private ObjectMapper mapper;
+	private final ObjectMapper mapper;
 
 	public SupportedCitiesProvider() {
 		mapper = new ObjectMapper();
 	}
 
-	public List<City> getSupportedCitiesList(String path) {
+	public List<City> getSupportedCities(String path) {
+		return transformMapToList(getSupportedCitiesMap(path));
+	}
+
+	List<City> getSupportedCitiesList(String path) {
 		List<City> cities = new ArrayList<>();
 		try {
 			log.info("Reading cities list from " + path);
@@ -35,7 +39,7 @@ public class SupportedCitiesProvider {
 		return cities;
 	}
 
-	public Map<String, String> getSupportedCitiesMap(String path) {
+	Map<String, String> getSupportedCitiesMap(String path) {
 		Map<String, String> map = new HashMap<>();
 		try {
 			log.info("Reading cities map from " + path);
@@ -45,6 +49,16 @@ public class SupportedCitiesProvider {
 			log.error("Cannot read file: " + path);
 		}
 		return map;
+	}
+
+	List<City> transformMapToList(Map<String, String> citiesMap) {
+		List<City> citiesList = new ArrayList<>();
+
+		citiesMap.entrySet().forEach((entry) -> {
+			citiesList.add(new City(entry.getKey(), entry.getValue()));
+		});
+
+		return citiesList;
 	}
 
 }
