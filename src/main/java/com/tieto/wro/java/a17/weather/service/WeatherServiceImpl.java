@@ -24,7 +24,8 @@ public class WeatherServiceImpl {
 	public WeatherServiceImpl(WundergroundClient client, WundergroundResponseTransformer transformer) {
 		this.client = client;
 		this.transformer = transformer;
-		this.supportedCities = SupportedCitiesProvider.getSupportedCities();
+		SupportedCitiesProvider provider = new SupportedCitiesProvider();
+		this.supportedCities = provider.getSupportedCities("src/main/resources/cities_objects.json");
 		log.info("WeatherService instantiated.");
 	}
 

@@ -1,19 +1,29 @@
 package com.tieto.wro.java.a17.weather;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.type.TypeFactory;
 import com.tieto.wro.java.a17.weather.model.City;
-import java.util.Arrays;
+import java.io.File;
+import java.io.IOException;
 import java.util.List;
+import lombok.extern.log4j.Log4j;
 
+@Log4j
 public class SupportedCitiesProvider {
 
-	public static List<City> getSupportedCities() {
-		List<City> cities = Arrays.asList(
-				new City("wroclaw", "00000.7.12424"),
-				new City("lodz", "00000.102.12465"),
-				new City("czestochowa", "00000.484.12550"),
-				new City("bielsko-biala", "00000.70.12600"),
-				new City("ulkokalla", "00000.30.02907"));
-		return cities;
+	public List<City> getSupportedCities(String path) {
+		try {
+			log.info("Reading cities list from cities.json");
+			ObjectMapper mapper = new ObjectMapper();
+			List<City> cities = mapper.readValue(
+					new File(path),
+					TypeFactory.defaultInstance().constructCollectionType(List.class, City.class)
+			);
+			return cities;
+		} catch (IOException ex) {
+			log.error("Cannot read cities.json file.");
+		}
+		return null;
 	}
 
 }
