@@ -35,7 +35,7 @@ public class WeatherServiceImplTest {
 	public void When_SupportedCity_Expect_GetCityWeatherReturnsCorrectCW() {
 		Response response = new Response();
 		CityWeather cityWeather = new CityWeather();
-		when(client.getWeather(Matchers.anyString())).thenReturn(response);
+		when(client.getWeatherById(Matchers.anyString())).thenReturn(response);
 		when(transformer.transform(response)).thenReturn(cityWeather);
 
 		CityWeather cwResult = service.getCityWeather(SUPP_CITY);
@@ -64,7 +64,7 @@ public class WeatherServiceImplTest {
 	public void When_GetCitiesWeathers_Expect_GetCitiesWeathersReturnsListWithNonNull() {
 		Response response = new Response();
 		CityWeather cityWeather = new CityWeather();
-		when(client.getWeather(Matchers.anyString())).thenReturn(response);
+		when(client.getWeatherById(Matchers.anyString())).thenReturn(response);
 		when(transformer.transform(response)).thenReturn(cityWeather);
 
 		List<CityWeather> cwResult = service.getCitiesWeathers();

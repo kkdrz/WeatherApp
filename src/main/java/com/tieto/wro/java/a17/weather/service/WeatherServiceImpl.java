@@ -39,7 +39,7 @@ public class WeatherServiceImpl {
 	}
 
 	private CityWeather getCityWeatherById(String id) {
-		Response response = client.getWeather(id);
+		Response response = client.getWeatherById(id);
 		if (response == null) {
 			log.warn("Response from client is null. Requested zmw: " + id);
 			return null;

@@ -29,7 +29,7 @@ public class WundergroundClient {
 		return getResponse(uri);
 	}
 
-	public Response getWeather(String zmw) {
+	public Response getWeatherById(String zmw) {
 		String uri = getUri(zmw);
 		return getResponse(uri);
 	}
