@@ -6,12 +6,10 @@ import lombok.Data;
 public class City {
 
 	private String name;
-	private String country;
 	private String id;
 
-	public City(String name, String country, String id) {
+	public City(String name, String id) {
 		this.name = name;
-		this.country = country;
 		this.id = id;
 	}
 	
