@@ -22,7 +22,9 @@ public class SupportedCitiesProvider {
 	}
 
 	public List<City> getSupportedCities(String path) {
-		return transformMapToList(getSupportedCitiesMap(path));
+		List<City> cities = transformMapToList(getSupportedCitiesMap(path));
+		log.info("Reading file: " + path + " completed.");
+		return cities;
 	}
 
 	List<City> getSupportedCitiesList(String path) {

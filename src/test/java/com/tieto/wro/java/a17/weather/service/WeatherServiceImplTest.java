@@ -1,9 +1,11 @@
 package com.tieto.wro.java.a17.weather.service;
 
 import com.tieto.wro.java.a17.weather.WundergroundResponseTransformer;
+import com.tieto.wro.java.a17.weather.model.City;
 import com.tieto.wro.java.a17.weather.model.CityWeather;
 import com.tieto.wro.java.a17.wunderground.client.WundergroundClient;
 import com.tieto.wro.java.a17.wunderground.model.Response;
+import java.util.Arrays;
 import java.util.List;
 import static org.junit.Assert.*;
 import org.junit.Before;
@@ -28,7 +30,7 @@ public class WeatherServiceImplTest {
 
 	@Before
 	public void setUp() {
-		service = new WeatherServiceImpl(client, transformer);
+		service = new WeatherServiceImpl(client, transformer, getSupportedCities());
 	}
 
 	@Test
@@ -71,6 +73,16 @@ public class WeatherServiceImplTest {
 
 		assertFalse(cwResult.contains(null));
 		assertFalse(cwResult.isEmpty());
+	}
+
+	private List<City> getSupportedCities() {
+		List<City> cities = Arrays.asList(
+				new City("wroclaw", "00000.7.12424"),
+				new City("lodz", "00000.102.12465"),
+				new City("czestochowa", "00000.484.12550"),
+				new City("bielsko-biala", "00000.70.12600"),
+				new City("ulkokalla", "00000.30.02907"));
+		return cities;
 	}
 
 }

@@ -1,6 +1,5 @@
 package com.tieto.wro.java.a17.weather.service;
 
-import com.tieto.wro.java.a17.weather.SupportedCitiesProvider;
 import com.tieto.wro.java.a17.weather.WundergroundResponseTransformer;
 import com.tieto.wro.java.a17.weather.model.City;
 import com.tieto.wro.java.a17.weather.model.CityWeather;
@@ -17,16 +16,15 @@ public class WeatherServiceImpl {
 	private final WundergroundResponseTransformer transformer;
 	private List<City> supportedCities;
 
-	public WeatherServiceImpl(WundergroundClient client) {
-		this(client, new WundergroundResponseTransformer());
+	public WeatherServiceImpl(String apiUrl, List<City> supportedCities) {
+		this(new WundergroundClient(apiUrl), new WundergroundResponseTransformer(), supportedCities);
 	}
 
-	public WeatherServiceImpl(WundergroundClient client, WundergroundResponseTransformer transformer) {
+	public WeatherServiceImpl(WundergroundClient client, WundergroundResponseTransformer transformer, List<City> supportedCities) {
 		this.client = client;
 		this.transformer = transformer;
-		SupportedCitiesProvider provider = new SupportedCitiesProvider();
-		this.supportedCities = provider.getSupportedCities("src/main/resources/cities.json");
-		log.info("WeatherService instantiated.");
+		this.supportedCities = supportedCities;
+		log.info("WeatherService instantiated with supported cities: " + supportedCities);
 	}
 
 	public CityWeather getCityWeather(String cityName) {
