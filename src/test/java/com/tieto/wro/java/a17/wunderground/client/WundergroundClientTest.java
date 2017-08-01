@@ -42,6 +42,15 @@ public class WundergroundClientTest {
 				.withBody(new FileReader(new File("src/test/resources/" + xmlName + ".xml").getAbsolutePath()));
 	}
 
+	private void jadlerRespondWith(String zmw, String xmlName) throws FileNotFoundException {
+		onRequest()
+				.havingMethodEqualTo("GET")
+				.havingPathEqualTo(PATH + "zmw:" + zmw + ".xml")
+				.respond()
+				.withContentType(MediaType.APPLICATION_XML)
+				.withBody(new FileReader(new File("src/test/resources/" + xmlName + ".xml").getAbsolutePath()));
+	}
+
 	@Test
 	public void When_ValidPathPolandWroclaw_Expect_CorrectResponseMappingCurrentObservation() throws FileNotFoundException {
 		String country = "Poland";
@@ -51,7 +60,6 @@ public class WundergroundClientTest {
 		Response response = client.getWeather(country, city);
 
 		assertHasCurrentObservation(response);
-
 	}
 
 	@Test
@@ -124,6 +132,26 @@ public class WundergroundClientTest {
 		String city = null;
 
 		client.getUri(country, city);
+	}
+
+	@Test
+	public void When_IdCorrect_ExpectGetWeatherByIdReturnsResponseCO() throws FileNotFoundException {
+		String cityId = "12345678.67864";
+		jadlerRespondWith(cityId, "query_poland_wroclaw");
+
+		Response response = client.getWeatherById(cityId);
+
+		assertHasCurrentObservation(response);
+	}
+
+	@Test
+	public void When_IdIncorrect_ExpectGetWeatherByIdReturnsResponseErr() throws FileNotFoundException {
+		String cityId = "12345678.67864";
+		jadlerRespondWith(cityId, "query_not_found");
+
+		Response response = client.getWeatherById(cityId);
+
+		assertHasError(response);
 	}
 
 	private void assertIsIncorrect(Response response) {
