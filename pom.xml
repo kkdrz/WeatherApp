@@ -52,7 +52,7 @@
 				</configuration>
 			</plugin>
             
-			<plugin>
+<!--			<plugin>
 				<groupId>com.smartbear.soapui</groupId>
 				<artifactId>soapui-maven-plugin</artifactId>
 				<version>${soapUI.version}</version>
@@ -71,12 +71,11 @@
 						</configuration>
 					</execution>
 				</executions>
-			</plugin>
+			</plugin>-->
 		</plugins>
 	</build>
-    
-	<dependencies>
 
+	<dependencies>
 		<!--Jersey-->
 		<dependency>
 			<groupId>org.glassfish.jersey.containers</groupId>
