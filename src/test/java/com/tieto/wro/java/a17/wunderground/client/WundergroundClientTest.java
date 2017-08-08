@@ -1,10 +1,10 @@
 package com.tieto.wro.java.a17.wunderground.client;
 
+import com.tieto.wro.java.a17.weather.provider.client.WundergroundClient;
 import com.tieto.wro.java.a17.wunderground.model.Response;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
-import javax.ws.rs.client.ClientBuilder;
 import javax.ws.rs.core.MediaType;
 import static net.jadler.Jadler.*;
 import net.jadler.stubbing.server.jdk.JdkStubHttpServer;
@@ -24,7 +24,7 @@ public class WundergroundClientTest {
 	public void setUp() {
 		initJadlerUsing(new JdkStubHttpServer());
 		API_URL = "http://localhost:" + port();
-		client = new WundergroundClient(ClientBuilder.newClient(), API_URL);
+		client = new WundergroundClient(API_URL);
 	}
 
 	@After
@@ -46,7 +46,7 @@ public class WundergroundClientTest {
 		String cityId = "12345678.67864";
 		jadlerRespondWith(cityId, "query_poland_wroclaw");
 
-		Response response = client.getWeatherById(cityId);
+		Response response = client.getWeatherByZmw(cityId);
 
 		assertHasCurrentObservation(response);
 	}
@@ -56,7 +56,7 @@ public class WundergroundClientTest {
 		String cityId = "12345678.67864";
 		jadlerRespondWith(cityId, "query_not_found");
 
-		Response response = client.getWeatherById(cityId);
+		Response response = client.getWeatherByZmw(cityId);
 
 		assertHasError(response);
 	}

@@ -1,9 +1,9 @@
 package com.tieto.wro.java.a17.weather.service;
 
-import com.tieto.wro.java.a17.weather.WundergroundResponseTransformer;
 import com.tieto.wro.java.a17.weather.model.City;
 import com.tieto.wro.java.a17.weather.model.CityWeather;
-import com.tieto.wro.java.a17.wunderground.client.WundergroundClient;
+import com.tieto.wro.java.a17.weather.provider.client.WundergroundClient;
+import com.tieto.wro.java.a17.weather.provider.client.WundergroundResponseTransformer;
 import com.tieto.wro.java.a17.wunderground.model.Response;
 import java.util.Arrays;
 import java.util.List;
@@ -32,14 +32,14 @@ public class WeatherServiceImplTest {
 
 	@Before
 	public void setUp() {
-		service = new WeatherServiceImpl(client, transformer, getSupportedCities());
+		service = new WeatherServiceImpl(client, getSupportedCities());
 	}
 
 	@Test
 	public void When_SupportedCity_Expect_GetCityWeatherReturnsCorrectCW() {
 		Response response = new Response();
 		CityWeather cityWeather = new CityWeather();
-		when(client.getWeatherById(Matchers.anyString())).thenReturn(response);
+		when(client.getWeatherByZmw(Matchers.anyString())).thenReturn(response);
 		when(transformer.transform(response)).thenReturn(cityWeather);
 
 		CityWeather cwResult = service.getCityWeather(SUPP_CITY);
@@ -65,7 +65,7 @@ public class WeatherServiceImplTest {
 	public void When_GetCitiesWeathers_Expect_GetCitiesWeathersReturnsListWithNonNull() {
 		Response response = new Response();
 		CityWeather cityWeather = new CityWeather();
-		when(client.getWeatherById(Matchers.anyString())).thenReturn(response);
+		when(client.getWeatherByZmw(Matchers.anyString())).thenReturn(response);
 		when(transformer.transform(response)).thenReturn(cityWeather);
 
 		List<CityWeather> cwResult = service.getCitiesWeathers();

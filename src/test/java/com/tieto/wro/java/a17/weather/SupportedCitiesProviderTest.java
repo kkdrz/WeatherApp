@@ -21,7 +21,7 @@ public class SupportedCitiesProviderTest {
 		List<City> cities = provider.getSupportedCitiesList("src/test/resources/cities_objects.json");
 
 		assertNotNull(cities);
-		assertTrue(!cities.isEmpty());
+		assertFalse(cities.isEmpty());
 	}
 
 	@Test
@@ -29,7 +29,7 @@ public class SupportedCitiesProviderTest {
 		Map<String, String> cities = provider.getSupportedCitiesMap("src/test/resources/cities.json");
 
 		assertNotNull(cities);
-		assertTrue(!cities.isEmpty());
+		assertFalse(cities.isEmpty());
 	}
 
 	@Test
@@ -38,12 +38,12 @@ public class SupportedCitiesProviderTest {
 		map.put("wroclaw", "00000.7.12424");
 		map.put("lodz", "00000.7.234234");
 		map.put("khykyh", "01231.213433");
-		
+
 		List<City> list = provider.transformMapToList(map);
-		
+
 		assertNotNull(list);
 		assertTrue(!list.isEmpty());
-		assertTrue(map.get("wroclaw").equals(list.get(0).getId()));
+		assertTrue(map.get("wroclaw").equals(list.get(0).getZmw()));
 	}
 
 }

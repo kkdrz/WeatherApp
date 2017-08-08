@@ -1,13 +1,15 @@
-package com.tieto.wro.java.a17.weather.database;
+package com.tieto.wro.java.a17.weather.provider.database;
 
+import com.tieto.wro.java.a17.weather.model.City;
 import com.tieto.wro.java.a17.weather.model.CityWeather;
+import com.tieto.wro.java.a17.weather.provider.CityWeatherProvider;
 import lombok.extern.log4j.Log4j;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.cfg.Configuration;
 
 @Log4j
-public class DbCache {
+public class DbCache implements CityWeatherProvider {
 
 	private SessionFactory factory;
 
@@ -51,6 +53,11 @@ public class DbCache {
 			log.info("Quering done.");
 			return cityWeather;
 		}
+	}
+
+	@Override
+	public CityWeather getCityWeather(City city) {
+		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
 	}
 
 }

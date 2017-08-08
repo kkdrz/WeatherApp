@@ -36,7 +36,7 @@ public class SupportedCitiesProvider {
 					TypeFactory.defaultInstance().constructCollectionType(List.class, City.class)
 			);
 		} catch (IOException ex) {
-			log.error("Cannot read file: " + path);
+			log.error("Cannot read file: " + path + "\n" + ex);
 		}
 		return cities;
 	}

@@ -1,5 +1,6 @@
 package com.tieto.wro.java.a17.weather;
 
+import com.tieto.wro.java.a17.weather.provider.client.WundergroundResponseTransformer;
 import com.tieto.wro.java.a17.weather.model.CityWeather;
 import com.tieto.wro.java.a17.wunderground.TestObjectProvider;
 import com.tieto.wro.java.a17.wunderground.model.Response;

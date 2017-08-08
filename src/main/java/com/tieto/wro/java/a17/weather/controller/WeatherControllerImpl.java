@@ -17,18 +17,15 @@ import lombok.extern.log4j.Log4j;
 @Path("/weather")
 public class WeatherControllerImpl {
 
-	private static final String API_KEY = "b6bfc129d8a2c4ea";
-	private static final String API_URL = "http://localhost:8089/api.wunderground.com/api/" + API_KEY;
-
 	private WeatherServiceImpl service;
 
 	public WeatherControllerImpl() {
 		initWeatherService();
-		log.info("WundergroundController instantiated with API_URL: \n" + API_URL);
+		log.info("WundergroundController instantiated.");
 	}
 
 	private void initWeatherService() {
-		service = new WeatherServiceImpl(API_URL, App.SUPPORTED_CITIES);
+		service = new WeatherServiceImpl(App.SUPPORTED_CITIES);
 	}
 
 	@GET

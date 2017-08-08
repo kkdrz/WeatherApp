@@ -19,10 +19,12 @@ public class App extends ResourceConfig {
 	}
 
 	private void loadSupportedCities() {
+		log.info("Loading supported cities.");
 		SUPPORTED_CITIES = new SupportedCitiesProvider().getSupportedCities(CITIES_JSON_PATH);
 		if (SUPPORTED_CITIES == null || SUPPORTED_CITIES.isEmpty()) {
 			log.error("There is no cities in SUPPORTED_CITY. Check if path (" + CITIES_JSON_PATH + ") is correct and if JSON file exists.");
 		}
+		log.info("Loading supported cities done.");
 	}
 	
 }
