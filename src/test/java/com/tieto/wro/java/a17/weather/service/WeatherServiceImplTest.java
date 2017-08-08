@@ -2,14 +2,12 @@ package com.tieto.wro.java.a17.weather.service;
 
 import com.tieto.wro.java.a17.weather.model.City;
 import com.tieto.wro.java.a17.weather.model.CityWeather;
-import com.tieto.wro.java.a17.weather.provider.client.WundergroundClient;
-import com.tieto.wro.java.a17.weather.provider.client.WundergroundResponseTransformer;
-import com.tieto.wro.java.a17.wunderground.model.Response;
+import com.tieto.wro.java.a17.weather.provider.CityWeatherProvider;
+import com.tieto.wro.java.a17.weather.provider.database.DbCache;
 import java.util.Arrays;
 import java.util.List;
 import static org.junit.Assert.*;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Matchers;
@@ -17,32 +15,31 @@ import org.mockito.Mock;
 import static org.mockito.Mockito.when;
 import org.mockito.runners.MockitoJUnitRunner;
 
-@Ignore
 @RunWith(MockitoJUnitRunner.class)
 public class WeatherServiceImplTest {
 
 	@Mock
-	WundergroundClient client;
+	CityWeatherProvider provider;
 	@Mock
-	WundergroundResponseTransformer transformer;
+	DbCache cache;
 
 	private WeatherServiceImpl service;
-	private final String NOT_SUPP_CITY = "City";
-	private final String SUPP_CITY = "Wroclaw";
+	private final List<City> SUPP_CITIES = getSupportedCities();
+	private final String NOT_SUPP_CITY_NAME = "City";
+	private final City SUPP_CITY = SUPP_CITIES.get(0);
+	private final String SUPP_CITY_NAME = SUPP_CITY.getName();
 
 	@Before
 	public void setUp() {
-		service = new WeatherServiceImpl(client, getSupportedCities());
+		service = new WeatherServiceImpl(provider, SUPP_CITIES, cache, false);
 	}
 
 	@Test
 	public void When_SupportedCity_Expect_GetCityWeatherReturnsCorrectCW() {
-		Response response = new Response();
 		CityWeather cityWeather = new CityWeather();
-		when(client.getWeatherByZmw(Matchers.anyString())).thenReturn(response);
-		when(transformer.transform(response)).thenReturn(cityWeather);
+		when(provider.getCityWeather(SUPP_CITY)).thenReturn(cityWeather);
 
-		CityWeather cwResult = service.getCityWeather(SUPP_CITY);
+		CityWeather cwResult = service.getCityWeather(SUPP_CITY_NAME);
 
 		assertNotNull(cwResult);
 		assertEquals(cityWeather, cwResult);
@@ -50,24 +47,15 @@ public class WeatherServiceImplTest {
 
 	@Test
 	public void When_CityDoesntExist_Expect_GetCityWeatherReturnsNull() {
-		CityWeather cwResult = service.getCityWeather(NOT_SUPP_CITY);
+		CityWeather cwResult = service.getCityWeather(NOT_SUPP_CITY_NAME);
 
-		assertNull(cwResult);
-	}
-
-	@Test
-	public void When_NotSupportedCity_Expect_GetCityWeatherReturnsNull() {
-		CityWeather cwResult = service.getCityWeather(NOT_SUPP_CITY);
-		
 		assertNull(cwResult);
 	}
 
 	@Test
 	public void When_GetCitiesWeathers_Expect_GetCitiesWeathersReturnsListWithNonNull() {
-		Response response = new Response();
 		CityWeather cityWeather = new CityWeather();
-		when(client.getWeatherByZmw(Matchers.anyString())).thenReturn(response);
-		when(transformer.transform(response)).thenReturn(cityWeather);
+		when(provider.getCityWeather(Matchers.any(City.class))).thenReturn(cityWeather);
 
 		List<CityWeather> cwResult = service.getCitiesWeathers();
 

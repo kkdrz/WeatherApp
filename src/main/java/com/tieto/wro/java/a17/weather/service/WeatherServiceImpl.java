@@ -15,17 +15,16 @@ public class WeatherServiceImpl {
 	private CityWeatherProvider provider;
 	private List<City> supportedCities;
 	private final DbCache cache;
-	private final boolean cacheEnabled = true;
 
 	public WeatherServiceImpl(List<City> supportedCities) {
-		this(new WundergroundClient(), supportedCities);
+		this(new WundergroundClient(), supportedCities, new DbCache(), true);
 	}
 
 	public WeatherServiceImpl(
-			CityWeatherProvider provider, List<City> supportedCities) {
+			CityWeatherProvider provider, List<City> supportedCities, DbCache cache, boolean cacheEnabled) {
 		this.provider = provider;
 		this.supportedCities = supportedCities;
-		this.cache = new DbCache();
+		this.cache = cache;
 		log.info("WeatherService instantiated with supported cities:\n" + supportedCities);
 		if (cacheEnabled) {
 			updateCache();

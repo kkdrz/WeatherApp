@@ -9,24 +9,23 @@ import org.junit.Test;
 
 @Log4j
 public class DbCacheTest {
-	
+
 	private DbCache dbCache;
-	
+
 	@Before
 	public void setUp() {
 		dbCache = new DbCache();
 	}
-	
+
 	@Test
 	public void When_CityWeatherSavedIntoDB_Expect_QueryReturnsCityWeather() {
 		String city = "City";
 		CityWeather cw = new TestObjectProvider().getCityWeather(city);
-		
+
 		dbCache.saveOrUpdate(cw);
-		
+
 		CityWeather returned = dbCache.query(city);
 		Assert.assertTrue(cw.equals(returned));
 	}
-	
-	
+
 }

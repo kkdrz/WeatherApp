@@ -9,10 +9,10 @@ import org.glassfish.jersey.server.ResourceConfig;
 @Log4j
 @ApplicationPath("")
 public class App extends ResourceConfig {
-	
+
 	public static List<City> SUPPORTED_CITIES;
 	private static final String CITIES_JSON_PATH = "src/main/resources/cities.json";
-	
+
 	public App() {
 		packages("com.tieto.wro.java.a17.weather.controller");
 		loadSupportedCities();
@@ -26,5 +26,5 @@ public class App extends ResourceConfig {
 		}
 		log.info("Loading supported cities done.");
 	}
-	
+
 }
