@@ -1,5 +1,6 @@
 package com.tieto.wro.java.a17.wunderground;
 
+import com.tieto.wro.java.a17.weather.model.CityWeather;
 import com.tieto.wro.java.a17.wunderground.model.Response;
 
 public class TestObjectProvider {
@@ -26,6 +27,18 @@ public class TestObjectProvider {
 			}
 		}
 		return response;
+	}
+
+	public CityWeather getCityWeather() {
+		CityWeather cw = new CityWeather();
+		cw.setLocation("Lokacja, hehe");
+		cw.setRelativeHumidity("Humidity");
+		cw.setTemperatureCelsius(12.24);
+		cw.setWeather("Weder");
+		cw.setWeatherDate("Data wedera");
+		cw.setWindString("Wiatry");
+		cw.setWindDirection("direkcje wiatrów");
+		return cw;
 	}
 
 	private Response.CurrentObservation buildCurrentObservation() {

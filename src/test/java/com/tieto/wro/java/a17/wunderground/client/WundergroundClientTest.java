@@ -11,7 +11,6 @@ import net.jadler.stubbing.server.jdk.JdkStubHttpServer;
 import org.junit.After;
 import static org.junit.Assert.*;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 
 public class WundergroundClientTest {
@@ -84,16 +83,15 @@ public class WundergroundClientTest {
 		assertHasError(response);
 	}
 
-	@Ignore("Don't know if client should return null, or maybe just empty response.")
 	@Test
-	public void When_InvalidPath_Expect_IncorrectResponse() throws FileNotFoundException {
+	public void When_InvalidPath_Expect_NullResponse() throws FileNotFoundException {
 		String country = "Poland";
 		String city = "Wroclaw";
 		jadlerRespondWith(country, city, "query_not_found");
 
 		Response response = client.getWeather(country, "WrongCity/ShuldNotFind");
 
-		assertIsIncorrect(response);
+		assertNull(response);
 	}
 
 	@Test
