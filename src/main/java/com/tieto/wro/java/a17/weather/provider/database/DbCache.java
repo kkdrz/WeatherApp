@@ -3,10 +3,12 @@ package com.tieto.wro.java.a17.weather.provider.database;
 import com.tieto.wro.java.a17.weather.model.City;
 import com.tieto.wro.java.a17.weather.model.CityWeather;
 import com.tieto.wro.java.a17.weather.provider.CityWeatherProvider;
+import java.util.List;
 import lombok.extern.log4j.Log4j;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.cfg.Configuration;
+import org.hibernate.query.Query;
 
 @Log4j
 public class DbCache implements CityWeatherProvider {
@@ -24,40 +26,31 @@ public class DbCache implements CityWeatherProvider {
 		}
 	}
 
-	public void insert(CityWeather cityWeather) {
-		try (Session session = factory.openSession()) {
-			log.info("Saving cityWeather for location: " + cityWeather.getLocation() + " to DB.");
-			session.beginTransaction();
-			session.save(cityWeather);
-			session.getTransaction().commit();
-			log.info("Saving done.");
-		}
+	@Override
+	public CityWeather getCityWeather(City city) {
+		return query(city.getName());
 	}
 
-	public void update(CityWeather cityWeather) {
+	public void saveOrUpdate(CityWeather cityWeather) {
 		try (Session session = factory.openSession()) {
-			log.info("Updating cityWeather: " + cityWeather.getLocation() + " to DB.");
+			log.info("Saving/Updating cityWeather: " + cityWeather.getLocation() + " to DB.");
 			session.beginTransaction();
 			session.saveOrUpdate(cityWeather);
 			session.getTransaction().commit();
-			log.info("Updating done.");
+			log.info("Saving/Updating done.");
 		}
 	}
 
-	public CityWeather query(String location) {
+	CityWeather query(String city) {
 		try (Session session = factory.openSession()) {
-			log.info("Quering cityWeather for location: " + location + " from DB.");
+			log.info("Quering cityWeather for location: " + city + " from DB.");
 			session.beginTransaction();
-			CityWeather cityWeather = session.get(CityWeather.class, location);
-			session.getTransaction().commit();
+			Query query = session.createQuery("from CityWeather cw where LCASE(cw.location) like :city");
+			query.setParameter("city", "%" + city.toLowerCase() + "%");
+
 			log.info("Quering done.");
-			return cityWeather;
+			List<CityWeather> cw = query.list();
+			return cw.get(0);
 		}
 	}
-
-	@Override
-	public CityWeather getCityWeather(City city) {
-		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-	}
-
 }

@@ -1,6 +1,5 @@
-package com.tieto.wro.java.a17.weather.database;
+package com.tieto.wro.java.a17.weather.provider.database;
 
-import com.tieto.wro.java.a17.weather.provider.database.DbCache;
 import com.tieto.wro.java.a17.weather.model.CityWeather;
 import com.tieto.wro.java.a17.wunderground.TestObjectProvider;
 import lombok.extern.log4j.Log4j;
@@ -19,13 +18,15 @@ public class DbCacheTest {
 	}
 	
 	@Test
-	public void When_CityWeatherInsertedIntoDB_Expect_QueryReturnsCityWeather() {
-		CityWeather cw = new TestObjectProvider().getCityWeather();
+	public void When_CityWeatherSavedIntoDB_Expect_QueryReturnsCityWeather() {
+		String city = "City";
+		CityWeather cw = new TestObjectProvider().getCityWeather(city);
 		
-		dbCache.insert(cw);
+		dbCache.saveOrUpdate(cw);
 		
-		CityWeather returned = dbCache.query(cw.getLocation());
+		CityWeather returned = dbCache.query(city);
 		Assert.assertTrue(cw.equals(returned));
 	}
+	
 	
 }

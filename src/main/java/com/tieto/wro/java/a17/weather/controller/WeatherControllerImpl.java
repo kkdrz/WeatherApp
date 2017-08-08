@@ -5,6 +5,7 @@ import com.tieto.wro.java.a17.weather.model.CityWeather;
 import com.tieto.wro.java.a17.weather.service.WeatherServiceImpl;
 import java.util.Collection;
 import java.util.List;
+import javax.inject.Singleton;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
@@ -14,6 +15,7 @@ import javax.ws.rs.core.Response;
 import lombok.extern.log4j.Log4j;
 
 @Log4j
+@Singleton
 @Path("/weather")
 public class WeatherControllerImpl {
 

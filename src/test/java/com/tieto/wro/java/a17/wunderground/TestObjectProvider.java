@@ -29,9 +29,9 @@ public class TestObjectProvider {
 		return response;
 	}
 
-	public CityWeather getCityWeather() {
+	public CityWeather getCityWeather(String city) {
 		CityWeather cw = new CityWeather();
-		cw.setLocation("Lokacja, hehe");
+		cw.setLocation(city + ", hehe");
 		cw.setRelativeHumidity("Humidity");
 		cw.setTemperatureCelsius(12.24);
 		cw.setWeather("Weder");

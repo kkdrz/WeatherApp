@@ -58,6 +58,7 @@ public class WeatherServiceImplTest {
 	@Test
 	public void When_NotSupportedCity_Expect_GetCityWeatherReturnsNull() {
 		CityWeather cwResult = service.getCityWeather(NOT_SUPP_CITY);
+		
 		assertNull(cwResult);
 	}
 
