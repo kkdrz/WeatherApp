@@ -24,11 +24,6 @@ public class WundergroundClient {
 		log.info("WundergroundClient with apiURL=" + apiUrl + " is instantiated.");
 	}
 
-	public Response getWeather(String country, String city) {
-		String uri = getUri(country, city);
-		return getResponse(uri);
-	}
-
 	public Response getWeatherById(String zmw) {
 		String uri = getUri(zmw);
 		return getResponse(uri);
@@ -48,13 +43,6 @@ public class WundergroundClient {
 
 		log.info("Response received.");
 		return response;
-	}
-
-	protected String getUri(String country, String city) {
-		return UriBuilder.fromPath(API_URL)
-				.path("/conditions/q/{country}/{city}.xml")
-				.build(country, city)
-				.toString();
 	}
 
 	protected String getUri(String zmw) {
