@@ -3,7 +3,6 @@ package com.tieto.wro.java.a17.weather.service;
 import com.tieto.wro.java.a17.weather.model.City;
 import com.tieto.wro.java.a17.weather.model.CityWeather;
 import com.tieto.wro.java.a17.weather.provider.CityWeatherProvider;
-import com.tieto.wro.java.a17.weather.provider.database.DbCache;
 import java.util.Arrays;
 import java.util.List;
 import static org.junit.Assert.*;
@@ -20,18 +19,31 @@ public class WeatherServiceImplTest {
 
 	@Mock
 	CityWeatherProvider provider;
-	@Mock
-	DbCache cache;
 
 	private WeatherServiceImpl service;
-	private final List<City> SUPP_CITIES = getSupportedCities();
 	private final String NOT_SUPP_CITY_NAME = "City";
+
+	private final List<City> SUPP_CITIES = getSupportedCities();
 	private final City SUPP_CITY = SUPP_CITIES.get(0);
 	private final String SUPP_CITY_NAME = SUPP_CITY.getName();
 
 	@Before
 	public void setUp() {
-		service = new WeatherServiceImpl(provider, SUPP_CITIES, cache, false);
+		service = new WeatherServiceImpl(provider, SUPP_CITIES, null, false);
+	}
+
+	@Test
+	public void When_CityLowerUpperCase_Expect_GetCityWeatherReturnsCorrectCW() {
+		CityWeather cityWeather = new CityWeather();
+		when(provider.getCityWeather(Matchers.any())).thenReturn(cityWeather);
+
+		CityWeather cwResultUpper = service.getCityWeather(SUPP_CITY_NAME.toUpperCase());
+		CityWeather cwResultLower = service.getCityWeather(SUPP_CITY_NAME.toLowerCase());
+
+		assertNotNull(cwResultUpper);
+		assertNotNull(cwResultLower);
+		assertEquals(cityWeather, cwResultUpper);
+		assertEquals(cityWeather, cwResultLower);
 	}
 
 	@Test

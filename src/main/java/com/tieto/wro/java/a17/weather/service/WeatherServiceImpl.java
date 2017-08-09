@@ -20,8 +20,11 @@ public class WeatherServiceImpl {
 		this(new WundergroundClient(), supportedCities, new DbCache(), true);
 	}
 
-	public WeatherServiceImpl(
-			CityWeatherProvider provider, List<City> supportedCities, DbCache cache, boolean cacheEnabled) {
+	WeatherServiceImpl(
+			CityWeatherProvider provider,
+			List<City> supportedCities,
+			DbCache cache,
+			boolean cacheEnabled) {
 		this.provider = provider;
 		this.supportedCities = supportedCities;
 		this.cache = cache;
@@ -31,24 +34,15 @@ public class WeatherServiceImpl {
 		}
 	}
 
+	private void setCacheEnabled() {
+		updateCache();
+		this.provider = cache;
+	}
+
 	public CityWeather getCityWeather(String cityName) {
 		log.info("getCityWeather for \"" + cityName + "\" invoked.");
 		City city = getCityIfSupported(cityName);
 		return city != null ? getCityWeather(city) : null;
-	}
-
-	public List<CityWeather> getCitiesWeathers() {
-		log.info("getCitiesWeathers method invoked.");
-		List<CityWeather> response = new ArrayList<>();
-		for (City city : supportedCities) {
-			response.add(getCityWeather(city));
-		}
-		log.info("Returning response: List<CityWeather>");
-		return response;
-	}
-
-	private CityWeather getCityWeather(City city) {
-		return provider.getCityWeather(city);
 	}
 
 	private City getCityIfSupported(String cityName) {
@@ -71,6 +65,20 @@ public class WeatherServiceImpl {
 		return null;
 	}
 
+	public List<CityWeather> getCitiesWeathers() {
+		log.info("getCitiesWeathers method invoked.");
+		List<CityWeather> response = new ArrayList<>();
+		for (City city : supportedCities) {
+			response.add(getCityWeather(city));
+		}
+		log.info("Returning response: List<CityWeather>");
+		return response;
+	}
+
+	private CityWeather getCityWeather(City city) {
+		return provider.getCityWeather(city);
+	}
+
 	public void updateCache() {
 		log.info("Updating CityWeather cache.");
 		List<CityWeather> cityWeathers = getCitiesWeathers();
@@ -78,11 +86,6 @@ public class WeatherServiceImpl {
 			cache.saveOrUpdate(cw);
 		});
 		log.info("Updating cache completed.");
-	}
-
-	private void setCacheEnabled() {
-		updateCache();
-		this.provider = cache;
 	}
 
 }
