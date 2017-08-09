@@ -19,7 +19,7 @@ public class WundergroundClient implements CityWeatherProvider {
 	private String API_URL;
 
 	public WundergroundClient() {
-		this(ClientBuilder.newClient(), new WundergroundResponseTransformer(), "http://localhost:8089/api.wunderground.com/api/b6bfc129d8a2c4ea");
+		this(ClientBuilder.newClient(), new WundergroundResponseTransformer(), "http://api.wunderground.com/api/b6bfc129d8a2c4ea");
 	}
 
 	public WundergroundClient(String API_URL) {

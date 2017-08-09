@@ -53,7 +53,7 @@ public class WeatherServiceImpl {
 	}
 
 	private City getCityIfSupported(String cityName) {
-		City city = findSupportedCityByName(cityName);
+		City city = findSupportedCityByName(cityName.toLowerCase());
 		if (city == null) {
 			log.warn("Requested city (" + cityName + ") is not supported.");
 			return null;
