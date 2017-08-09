@@ -5,6 +5,7 @@ import com.tieto.wro.java.a17.weather.model.CityWeather;
 import com.tieto.wro.java.a17.weather.provider.CityWeatherProvider;
 import java.util.List;
 import lombok.extern.log4j.Log4j;
+import org.hibernate.HibernateException;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.cfg.Configuration;
@@ -20,7 +21,7 @@ public class DbCache implements CityWeatherProvider {
 			factory = new Configuration()
 					.configure("hibernate.cfg.xml")
 					.buildSessionFactory();
-		} catch (Throwable ex) {
+		} catch (HibernateException ex) {
 			System.err.println("Initial SessionFactory creation failed." + ex);
 			throw new ExceptionInInitializerError(ex);
 		}
