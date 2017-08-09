@@ -64,6 +64,14 @@ public class WeatherControllerImpl {
 		log.info("Mapping CityWeather entity to JSON.");
 		return responseOK(entity);
 	}
+	
+	@GET
+	@Path("/update")
+	public void updateCache() {
+		log.info("updateCache request invoked.");
+		service.updateCache();
+		log.info("Cache has been updated.");
+	}
 
 	private Response responseOK(Object entity) {
 		return Response.status(Response.Status.OK)

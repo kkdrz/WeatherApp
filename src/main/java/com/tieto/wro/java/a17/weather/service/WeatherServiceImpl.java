@@ -71,7 +71,7 @@ public class WeatherServiceImpl {
 		return null;
 	}
 
-	private void updateCache() {
+	public void updateCache() {
 		log.info("Updating CityWeather cache.");
 		List<CityWeather> cityWeathers = getCitiesWeathers();
 		cityWeathers.forEach((cw) -> {
