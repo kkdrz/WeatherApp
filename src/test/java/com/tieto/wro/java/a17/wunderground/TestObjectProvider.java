@@ -29,7 +29,7 @@ public class TestObjectProvider {
 		return response;
 	}
 
-	public CityWeather getCityWeather(String city) {
+	public CityWeather buildCityWeather(String city) {
 		CityWeather cw = new CityWeather();
 		cw.setLocation(city + ", hehe");
 		cw.setRelativeHumidity("Humidity");

@@ -13,30 +13,31 @@ public class WeatherServiceImpl {
 
 	private CityWeatherProvider provider;
 	private List<City> supportedCities;
-	private final DbCache cache;
+	private DbCache cache;
 
-	public WeatherServiceImpl(
-			List<City> supportedCities,
-			CityWeatherProvider provider) {
+	public WeatherServiceImpl(List<City> supportedCities, CityWeatherProvider provider) {
 		this(supportedCities, provider, null);
 	}
 
-	public WeatherServiceImpl(
-			List<City> supportedCities,
-			CityWeatherProvider provider,
-			DbCache cache) {
+	public WeatherServiceImpl(List<City> supportedCities, CityWeatherProvider provider, DbCache cache) {
 		this.provider = provider;
 		this.supportedCities = supportedCities;
-		this.cache = cache;
-		if (cache != null) {
-			setCacheEnabled();
+
+		if (supportedCities.isEmpty()) {
+			log.error("The list of supported cities is empty.");
 		}
+
+		enableCacheIfNotNull(cache);
 		log.info("WeatherService instantiated with supported cities:\n" + supportedCities);
 	}
 
-	private void setCacheEnabled() {
-		updateCache();
-		this.provider = cache;
+	private void enableCacheIfNotNull(DbCache cache) {
+		if (cache != null) {
+			this.cache = cache;
+			updateCache();
+			this.provider = cache;
+			log.info("Cache is enabled.");
+		}
 	}
 
 	public CityWeather getCityWeather(String cityName) {
@@ -48,10 +49,10 @@ public class WeatherServiceImpl {
 	private City getCityIfSupported(String cityName) {
 		City city = findSupportedCityByName(cityName);
 		if (city == null) {
-			log.warn("Requested city (" + cityName + ") is not supported.");
+			log.warn("Requested city \"" + cityName + "\" is not supported.");
 			return null;
 		}
-		log.info("Requested city is supported: " + city);
+		log.info("Requested city is supported: \"" + city +"\"");
 		return city;
 	}
 

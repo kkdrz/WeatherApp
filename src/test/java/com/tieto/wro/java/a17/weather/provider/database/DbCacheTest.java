@@ -20,7 +20,7 @@ public class DbCacheTest {
 	@Test
 	public void When_CityWeatherSavedIntoDB_Expect_QueryReturnsCityWeather() {
 		String city = "City";
-		CityWeather cw = new TestObjectProvider().getCityWeather(city);
+		CityWeather cw = new TestObjectProvider().buildCityWeather(city);
 
 		dbCache.saveOrUpdate(cw);
 		CityWeather returned = dbCache.query(city);
