@@ -68,9 +68,7 @@ public class WeatherControllerImpl {
 	@GET
 	@Path("/update")
 	public void updateCache() {
-		log.info("updateCache request invoked.");
 		service.updateCache();
-		log.info("Cache has been updated.");
 	}
 
 	private Response responseOK(Object entity) {
