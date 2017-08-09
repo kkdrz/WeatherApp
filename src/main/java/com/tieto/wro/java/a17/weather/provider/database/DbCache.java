@@ -45,12 +45,17 @@ public class DbCache implements CityWeatherProvider {
 	CityWeather query(String city) {
 		try (Session session = factory.openSession()) {
 			log.info("Quering cityWeather for location: " + city + " from DB.");
+			
 			session.beginTransaction();
-			Query query = session.createQuery("from CityWeather cw where LCASE(cw.location) like :city");
+			Query query = session.createQuery("FROM CityWeather cw where lower(cw.location) like :city");
 			query.setParameter("city", "%" + city.toLowerCase() + "%");
 
 			log.info("Quering done.");
 			List<CityWeather> cw = query.list();
+			if (cw.isEmpty()) {
+				log.error("Queried city: \"" + city + "\" doesnt exist in database.");
+				return null;
+			}
 			return cw.get(0);
 		}
 	}

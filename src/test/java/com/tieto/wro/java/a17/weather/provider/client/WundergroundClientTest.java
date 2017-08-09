@@ -1,6 +1,5 @@
 package com.tieto.wro.java.a17.weather.provider.client;
 
-import com.tieto.wro.java.a17.weather.provider.client.WundergroundClient;
 import com.tieto.wro.java.a17.wunderground.model.Response;
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -42,7 +41,7 @@ public class WundergroundClientTest {
 	}
 
 	@Test
-	public void When_IdCorrect_ExpectGetWeatherByIdReturnsResponseCO() throws FileNotFoundException {
+	public void When_IdCorrect_Expect_GetWeatherByIdReturnsResponseCO() throws FileNotFoundException {
 		String cityId = "12345678.67864";
 		jadlerRespondWith(cityId, "query_poland_wroclaw");
 
@@ -52,7 +51,7 @@ public class WundergroundClientTest {
 	}
 
 	@Test
-	public void When_IdIncorrect_ExpectGetWeatherByIdReturnsResponseErr() throws FileNotFoundException {
+	public void When_IdIncorrect_Expect_GetWeatherByIdReturnsResponseErr() throws FileNotFoundException {
 		String cityId = "12345678.67864";
 		jadlerRespondWith(cityId, "query_not_found");
 
@@ -71,5 +70,15 @@ public class WundergroundClientTest {
 		assertNotNull(response.getCurrentObservation());
 		assertNull(response.getResults());
 		assertNull(response.getError());
+	}
+	
+	@Test
+	public void When_ZmwGiven_Expect_BuildCorrectUrl() {
+		String zmw = "12323.12331";
+		String expected = API_URL + "/conditions/q/zmw:"+ zmw + ".xml";
+		
+		String result = client.buildUrl(zmw);
+		
+		assertEquals(expected, result);
 	}
 }

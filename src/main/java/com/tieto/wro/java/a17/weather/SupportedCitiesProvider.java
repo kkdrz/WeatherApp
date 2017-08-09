@@ -48,7 +48,7 @@ public class SupportedCitiesProvider {
 			map = mapper.readValue(new File(path), new TypeReference<Map<String, String>>() {
 			});
 		} catch (IOException ex) {
-			log.error("Cannot read file: " + path);
+			log.error("Cannot read file: " + path + "\n" + ex);
 		}
 		return map;
 	}

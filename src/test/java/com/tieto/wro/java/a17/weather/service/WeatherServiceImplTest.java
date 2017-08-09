@@ -29,7 +29,7 @@ public class WeatherServiceImplTest {
 
 	@Before
 	public void setUp() {
-		service = new WeatherServiceImpl(provider, SUPP_CITIES, null, false);
+		service = new WeatherServiceImpl(SUPP_CITIES, provider);
 	}
 
 	@Test

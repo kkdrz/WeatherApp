@@ -3,7 +3,6 @@ package com.tieto.wro.java.a17.weather.service;
 import com.tieto.wro.java.a17.weather.model.City;
 import com.tieto.wro.java.a17.weather.model.CityWeather;
 import com.tieto.wro.java.a17.weather.provider.CityWeatherProvider;
-import com.tieto.wro.java.a17.weather.provider.client.WundergroundClient;
 import com.tieto.wro.java.a17.weather.provider.database.DbCache;
 import java.util.ArrayList;
 import java.util.List;
@@ -16,22 +15,23 @@ public class WeatherServiceImpl {
 	private List<City> supportedCities;
 	private final DbCache cache;
 
-	public WeatherServiceImpl(List<City> supportedCities) {
-		this(new WundergroundClient(), supportedCities, new DbCache(), true);
+	public WeatherServiceImpl(
+			List<City> supportedCities,
+			CityWeatherProvider provider) {
+		this(supportedCities, provider, null);
 	}
 
-	WeatherServiceImpl(
-			CityWeatherProvider provider,
+	public WeatherServiceImpl(
 			List<City> supportedCities,
-			DbCache cache,
-			boolean cacheEnabled) {
+			CityWeatherProvider provider,
+			DbCache cache) {
 		this.provider = provider;
 		this.supportedCities = supportedCities;
 		this.cache = cache;
-		log.info("WeatherService instantiated with supported cities:\n" + supportedCities);
-		if (cacheEnabled) {
+		if (cache != null) {
 			setCacheEnabled();
 		}
+		log.info("WeatherService instantiated with supported cities:\n" + supportedCities);
 	}
 
 	private void setCacheEnabled() {

@@ -2,6 +2,8 @@ package com.tieto.wro.java.a17.weather.controller;
 
 import com.tieto.wro.java.a17.weather.App;
 import com.tieto.wro.java.a17.weather.model.CityWeather;
+import com.tieto.wro.java.a17.weather.provider.client.WundergroundClient;
+import com.tieto.wro.java.a17.weather.provider.database.DbCache;
 import com.tieto.wro.java.a17.weather.service.WeatherServiceImpl;
 import java.util.Collection;
 import java.util.List;
@@ -27,7 +29,7 @@ public class WeatherControllerImpl {
 	}
 
 	private void initWeatherService() {
-		service = new WeatherServiceImpl(App.SUPPORTED_CITIES);
+		service = new WeatherServiceImpl(App.SUPPORTED_CITIES, new WundergroundClient(), new DbCache());
 	}
 
 	@GET
