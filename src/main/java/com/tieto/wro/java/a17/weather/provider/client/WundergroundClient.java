@@ -41,26 +41,26 @@ public class WundergroundClient implements CityWeatherProvider {
 	}
 
 	public Response getWeatherByZmw(String zmw) {
-		String uri = buildUri(zmw);
-		return getResponse(uri);
+		String uri = buildUrl(zmw);
+		return getResponseFromUrl(uri);
 	}
 
-	private Response getResponse(String uri) {
-		log.info("Getting response from URL: " + uri);
+	private Response getResponseFromUrl(String url) {
+		log.info("Getting response from URL: " + url);
 		Response response;
 		try {
-			response = client.target(uri)
+			response = client.target(url)
 					.request(MediaType.APPLICATION_XML)
 					.get(Response.class);
 		} catch (NotFoundException e) {
-			log.error("Response from URL: " + uri + " not found.");
+			log.error("Response from URL: " + url + " not found.\n" + e);
 			return null;
 		}
 		log.info("Response received.");
 		return response;
 	}
 
-	protected String buildUri(String zmw) {
+	protected String buildUrl(String zmw) {
 		return UriBuilder.fromPath(API_URL)
 				.path("/conditions/q/zmw:{zmw}.xml")
 				.build(zmw)
