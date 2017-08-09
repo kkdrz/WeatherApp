@@ -27,8 +27,7 @@ public class WeatherServiceImpl {
 		this.cache = cache;
 		log.info("WeatherService instantiated with supported cities:\n" + supportedCities);
 		if (cacheEnabled) {
-			updateCache();
-			this.provider = cache;
+			setCacheEnabled();
 		}
 	}
 
@@ -53,7 +52,7 @@ public class WeatherServiceImpl {
 	}
 
 	private City getCityIfSupported(String cityName) {
-		City city = findSupportedCityByName(cityName.toLowerCase());
+		City city = findSupportedCityByName(cityName);
 		if (city == null) {
 			log.warn("Requested city (" + cityName + ") is not supported.");
 			return null;
@@ -63,6 +62,7 @@ public class WeatherServiceImpl {
 	}
 
 	private City findSupportedCityByName(String cityName) {
+		cityName = cityName.toLowerCase();
 		for (City c : supportedCities) {
 			if (cityName.equals(c.getName())) {
 				return c;
@@ -78,6 +78,11 @@ public class WeatherServiceImpl {
 			cache.saveOrUpdate(cw);
 		});
 		log.info("Updating cache completed.");
+	}
+
+	private void setCacheEnabled() {
+		updateCache();
+		this.provider = cache;
 	}
 
 }
