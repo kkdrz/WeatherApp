@@ -3,7 +3,7 @@ package com.tieto.wro.java.a17.weather.provider.database;
 import com.tieto.wro.java.a17.weather.model.City;
 import com.tieto.wro.java.a17.weather.model.CityWeather;
 import com.tieto.wro.java.a17.weather.provider.CityWeatherProvider;
-import java.util.List;
+import javax.ws.rs.NotFoundException;
 import lombok.extern.log4j.Log4j;
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
@@ -27,7 +27,7 @@ public class DbCache implements CityWeatherProvider {
 	}
 
 	@Override
-	public CityWeather getCityWeather(City city) {
+	public CityWeather getCityWeather(City city) throws NotFoundException {
 		return query(city.getName());
 	}
 
@@ -41,21 +41,22 @@ public class DbCache implements CityWeatherProvider {
 		}
 	}
 
-	CityWeather query(String location) {
+	CityWeather query(String location) throws NotFoundException {
+		CityWeather cw;
 		try (Session session = factory.openSession()) {
 			log.info("Quering cityWeather for location: " + location + " from DB.");
 
 			session.beginTransaction();
-			List<CityWeather> cw = session.createQuery("FROM CityWeather cw where lower(cw.location) like :city")
+			cw = (CityWeather) session
+					.createQuery("FROM CityWeather cw where lower(cw.location) like :city")
 					.setParameter("city", "%" + location.toLowerCase() + "%")
-					.list();
-			log.info("Quering done.");
+					.getSingleResult();
 
-			if (cw.isEmpty()) {
-				log.error("Queried city: \"" + location + "\" doesnt exist in database.");
-				return null;
-			}
-			return cw.get(0);
+			log.info("Quering location: + \"" + location + "\" done.");
 		}
+		if (cw == null) {
+			throw new NotFoundException("CityWeather for location: \"" + location + "\" not found in database.");
+		}
+		return cw;
 	}
 }

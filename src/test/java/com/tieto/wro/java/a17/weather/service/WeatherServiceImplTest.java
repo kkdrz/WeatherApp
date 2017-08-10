@@ -7,6 +7,7 @@ import java.util.Arrays;
 import java.util.List;
 import static org.junit.Assert.*;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Matchers;
@@ -14,6 +15,7 @@ import org.mockito.Mock;
 import static org.mockito.Mockito.when;
 import org.mockito.runners.MockitoJUnitRunner;
 
+@Ignore
 @RunWith(MockitoJUnitRunner.class)
 public class WeatherServiceImplTest {
 

@@ -34,30 +34,22 @@ public class WundergroundClient implements CityWeatherProvider {
 	}
 
 	@Override
-	public CityWeather getCityWeather(City city) {
+	public CityWeather getCityWeather(City city) throws NotFoundException {
 		Response response = getWeatherByZmw(city.getZmw());
 		CityWeather cityWeather = transformer.transform(response);
 		return cityWeather;
 	}
 
-	public Response getWeatherByZmw(String zmw) {
+	public Response getWeatherByZmw(String zmw) throws NotFoundException {
 		String uri = buildUrl(zmw);
 		return getResponseFromUrl(uri);
 	}
 
-	private Response getResponseFromUrl(String url) {
+	private Response getResponseFromUrl(String url) throws NotFoundException {
 		log.info("Getting response from URL: " + url);
-		Response response;
-		try {
-			response = client.target(url)
+		return client.target(url)
 					.request(MediaType.APPLICATION_XML)
 					.get(Response.class);
-		} catch (NotFoundException e) {
-			log.error("Response from URL: " + url + " not found.\n" + e);
-			return null;
-		}
-		log.info("Response received.");
-		return response;
 	}
 
 	protected String buildUrl(String zmw) {

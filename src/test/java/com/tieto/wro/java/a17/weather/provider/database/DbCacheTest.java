@@ -5,8 +5,10 @@ import com.tieto.wro.java.a17.wunderground.TestObjectProvider;
 import lombok.extern.log4j.Log4j;
 import static org.junit.Assert.*;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 
+@Ignore
 @Log4j
 public class DbCacheTest {
 

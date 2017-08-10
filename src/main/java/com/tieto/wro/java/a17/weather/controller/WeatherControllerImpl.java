@@ -5,7 +5,6 @@ import com.tieto.wro.java.a17.weather.model.CityWeather;
 import com.tieto.wro.java.a17.weather.provider.client.WundergroundClient;
 import com.tieto.wro.java.a17.weather.provider.database.DbCache;
 import com.tieto.wro.java.a17.weather.service.WeatherServiceImpl;
-import java.util.Collection;
 import java.util.List;
 import javax.inject.Singleton;
 import javax.ws.rs.GET;
@@ -36,19 +35,14 @@ public class WeatherControllerImpl {
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response getCitiesWeathers() {
 		log.info("getCitiesWeathers request invoked.");
-		List<CityWeather> entities = service.getCitiesWeathers();
-
-		if (isNullOrEmpty(entities)) {
-			log.warn("None CityWeather was found.");
+		try {
+			List<CityWeather> entities = service.getCitiesWeathers();
+			log.info("Mapping entities to JSON.");
+			return responseOK(entities);
+		} catch (IllegalArgumentException e) {
+			log.warn("None CityWeather was found.", e);
 			return responseNotFound();
 		}
-
-		log.info("Mapping entities to JSON.");
-		return responseOK(entities);
-	}
-
-	private static <T> boolean isNullOrEmpty(Collection<T> entities) {
-		return entities == null || entities.isEmpty();
 	}
 
 	@GET
@@ -56,17 +50,16 @@ public class WeatherControllerImpl {
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response getCityWeather(@PathParam("city") String city) {
 		log.info("getCityWeather request for city: \"" + city + "\" invoked.");
-		CityWeather entity = service.getCityWeather(city);
-
-		if (entity == null) {
-			log.warn("CityWeather for city: \"" + city + "\" couldn't be found - null.");
+		try {
+			CityWeather entity = service.getCityWeather(city);
+			log.info("Mapping CityWeather entity to JSON.");
+			return responseOK(entity);
+		} catch (IllegalArgumentException e) {
+			log.warn("CityWeather for city: \"" + city + "\" couldn't be found - null.", e);
 			return responseNotFound();
 		}
-
-		log.info("Mapping CityWeather entity to JSON.");
-		return responseOK(entity);
 	}
-	
+
 	@GET
 	@Path("/update")
 	public void updateCache() {
