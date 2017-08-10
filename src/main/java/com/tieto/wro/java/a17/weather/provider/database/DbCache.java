@@ -52,7 +52,7 @@ public class DbCache implements CityWeatherProvider {
 					.setParameter("city", "%" + location.toLowerCase() + "%")
 					.getSingleResult();
 
-			log.info("Quering location: + \"" + location + "\" done.");
+			log.info("Quering location: \"" + location + "\" done.");
 		}
 		if (cw == null) {
 			throw new NotFoundException("CityWeather for location: \"" + location + "\" not found in database.");

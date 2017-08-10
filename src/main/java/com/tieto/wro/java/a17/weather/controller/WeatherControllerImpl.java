@@ -37,7 +37,6 @@ public class WeatherControllerImpl {
 		log.info("getCitiesWeathers request invoked.");
 		try {
 			List<CityWeather> entities = service.getCitiesWeathers();
-			log.info("Mapping entities to JSON.");
 			return responseOK(entities);
 		} catch (IllegalArgumentException e) {
 			log.warn("None CityWeather was found.", e);
@@ -52,7 +51,6 @@ public class WeatherControllerImpl {
 		log.info("getCityWeather request for city: \"" + city + "\" invoked.");
 		try {
 			CityWeather entity = service.getCityWeather(city);
-			log.info("Mapping CityWeather entity to JSON.");
 			return responseOK(entity);
 		} catch (IllegalArgumentException e) {
 			log.warn("CityWeather for city: \"" + city + "\" couldn't be found - null.", e);
@@ -63,6 +61,7 @@ public class WeatherControllerImpl {
 	@GET
 	@Path("/update")
 	public void updateCache() {
+		log.info("Update cache request invoked.");
 		service.updateCache();
 	}
 

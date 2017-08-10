@@ -13,6 +13,7 @@ import lombok.extern.log4j.Log4j;
 public class WeatherServiceImpl {
 
 	private CityWeatherProvider provider;
+	private CityWeatherProvider updateProvider;
 	private List<City> supportedCities;
 	private DbCache cache;
 
@@ -35,14 +36,14 @@ public class WeatherServiceImpl {
 	private void enableCacheIfNotNull(DbCache cache) {
 		if (cache != null) {
 			this.cache = cache;
-			updateCache();
+			this.updateProvider = this.provider;
 			this.provider = cache;
+			updateCache();
 			log.info("Cache is enabled.");
 		}
 	}
 
 	public CityWeather getCityWeather(String cityName) throws IllegalArgumentException {
-		log.info("getCityWeather for \"" + cityName + "\" invoked.");
 		City city = getCityIfSupported(cityName);
 		return getCityWeather(city);
 	}
@@ -58,6 +59,10 @@ public class WeatherServiceImpl {
 	}
 
 	private CityWeather getCityWeather(City city) {
+		return getCityWeather(city, provider);
+	}
+
+	private CityWeather getCityWeather(City city, CityWeatherProvider provider) {
 		try {
 			return provider.getCityWeather(city);
 		} catch (NotFoundException e) {
@@ -67,24 +72,28 @@ public class WeatherServiceImpl {
 	}
 
 	public List<CityWeather> getCitiesWeathers() {
-		log.info("getCitiesWeathers method invoked.");
+		return getCitiesWeathers(provider);
+	}
 
+	private List<CityWeather> getCitiesWeathers(CityWeatherProvider provider) {
 		List<CityWeather> response = new ArrayList<>();
 		for (City city : supportedCities) {
-			response.add(getCityWeather(city));
+			response.add(getCityWeather(city, provider));
 		}
-		log.info("Returning response: List<CityWeather>");
 		return response;
-
 	}
 
 	public void updateCache() {
-		log.info("Updating CityWeather cache.");
-		List<CityWeather> cityWeathers = getCitiesWeathers();
-		cityWeathers.forEach((cw) -> {
-			cache.saveOrUpdate(cw);
-		});
-		log.info("Updating cache completed.");
+		if (updateProvider == null) {
+			throw new UnsupportedOperationException("UpdateProvider is null. Cache is probably not enabled.");
+		} else {
+			log.info("Updating CityWeather cache.");
+			List<CityWeather> cityWeathers = getCitiesWeathers(updateProvider);
+			cityWeathers.forEach((cw) -> {
+				cache.saveOrUpdate(cw);
+			});
+			log.info("Updating cache completed.");
+		}
 	}
 
 }
