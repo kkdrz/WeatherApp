@@ -6,10 +6,12 @@ import com.tieto.wro.java.a17.weather.provider.CityWeatherProvider;
 import com.tieto.wro.java.a17.weather.provider.database.DbCache;
 import java.util.ArrayList;
 import java.util.List;
+import javax.inject.Singleton;
 import javax.ws.rs.NotFoundException;
 import lombok.extern.log4j.Log4j;
 
 @Log4j
+@Singleton
 public class WeatherServiceImpl {
 
 	private CityWeatherProvider provider;
