@@ -11,6 +11,7 @@ import org.junit.Test;
 public class DbCacheTest {
 
 	private DbCache dbCache;
+	private final String city = "City";
 
 	@Before
 	public void setUp() {
@@ -19,22 +20,19 @@ public class DbCacheTest {
 
 	@Test
 	public void When_CityWeatherSavedIntoDB_Expect_QueryReturnsCityWeather() {
-		String city = "City";
 		CityWeather cw = new TestObjectProvider().buildCityWeather(city);
 
 		dbCache.saveOrUpdate(cw);
 		CityWeather returned = dbCache.query(city);
-		
+
 		assertNotNull(returned);
 		assertTrue(cw.equals(returned));
 	}
-	
+
 	@Test
 	public void When_CityWeatherNotInDb_Expect_ReturnsNull() {
-		String city = "City";
-		
 		CityWeather returned = dbCache.query(city);
-		
+
 		assertNull(returned);
 	}
 

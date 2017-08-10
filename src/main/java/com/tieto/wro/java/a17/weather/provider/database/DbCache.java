@@ -9,7 +9,6 @@ import org.hibernate.HibernateException;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.cfg.Configuration;
-import org.hibernate.query.Query;
 
 @Log4j
 public class DbCache implements CityWeatherProvider {
@@ -19,10 +18,10 @@ public class DbCache implements CityWeatherProvider {
 	public DbCache() {
 		try {
 			factory = new Configuration()
-					.configure("hibernate.cfg.xml")
+					.configure()
 					.buildSessionFactory();
 		} catch (HibernateException ex) {
-			System.err.println("Initial SessionFactory creation failed." + ex);
+			log.error("Initial SessionFactory creation failed." + ex);
 			throw new ExceptionInInitializerError(ex);
 		}
 	}
@@ -42,18 +41,18 @@ public class DbCache implements CityWeatherProvider {
 		}
 	}
 
-	CityWeather query(String city) {
+	CityWeather query(String location) {
 		try (Session session = factory.openSession()) {
-			log.info("Quering cityWeather for location: " + city + " from DB.");
-			
-			session.beginTransaction();
-			Query query = session.createQuery("FROM CityWeather cw where lower(cw.location) like :city");
-			query.setParameter("city", "%" + city.toLowerCase() + "%");
+			log.info("Quering cityWeather for location: " + location + " from DB.");
 
+			session.beginTransaction();
+			List<CityWeather> cw = session.createQuery("FROM CityWeather cw where lower(cw.location) like :city")
+					.setParameter("city", "%" + location.toLowerCase() + "%")
+					.list();
 			log.info("Quering done.");
-			List<CityWeather> cw = query.list();
+
 			if (cw.isEmpty()) {
-				log.error("Queried city: \"" + city + "\" doesnt exist in database.");
+				log.error("Queried city: \"" + location + "\" doesnt exist in database.");
 				return null;
 			}
 			return cw.get(0);
