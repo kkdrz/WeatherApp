@@ -31,11 +31,18 @@ public class SupportedCitiesProviderTest {
 		assertNotNull(cities);
 		assertFalse(cities.isEmpty());
 	}
-	
+
 	@Test
-	public void When_FileDoesntExist_EXpect_ReturnsEmptyMap() {
+	public void When_FileDoesntExist_Expect_ReturnsEmptyMap() {
 		Map<String, String> cities = provider.getSupportedCitiesMap("wrong/path");
-		
+
+		assertTrue(cities.isEmpty());
+	}
+
+	@Test
+	public void When_FileDoesntExist_Expect_ReturnsEmptyList() {
+		List<City> cities = provider.getSupportedCitiesList("wrong/path");
+
 		assertTrue(cities.isEmpty());
 	}
 

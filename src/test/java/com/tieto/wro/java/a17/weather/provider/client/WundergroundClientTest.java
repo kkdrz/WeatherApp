@@ -4,6 +4,7 @@ import com.tieto.wro.java.a17.wunderground.model.Response;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
+import javax.ws.rs.client.ClientBuilder;
 import javax.ws.rs.core.MediaType;
 import static net.jadler.Jadler.*;
 import net.jadler.stubbing.server.jdk.JdkStubHttpServer;
@@ -11,19 +12,25 @@ import org.junit.After;
 import static org.junit.Assert.*;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.mockito.Mock;
+import org.mockito.runners.MockitoJUnitRunner;
 
+@RunWith(MockitoJUnitRunner.class)
 public class WundergroundClientTest {
 
 	private final String PATH = "/conditions/q/";
 
 	private String API_URL;
 	private WundergroundClient client;
+	@Mock
+	private WundergroundResponseTransformer transformer;
 
 	@Before
 	public void setUp() {
 		initJadlerUsing(new JdkStubHttpServer());
 		API_URL = "http://localhost:" + port();
-		client = new WundergroundClient(API_URL);
+		client = new WundergroundClient(API_URL, ClientBuilder.newClient(), transformer);
 	}
 
 	@After
@@ -41,7 +48,7 @@ public class WundergroundClientTest {
 	}
 
 	@Test
-	public void When_IdCorrect_Expect_GetWeatherByIdReturnsResponseCO() throws FileNotFoundException {
+	public void When_IdCorrect_Expect_GetWeatherByZmwReturnsResponseCO() throws FileNotFoundException {
 		String cityId = "12345678.67864";
 		jadlerRespondWith(cityId, "query_poland_wroclaw");
 
@@ -51,7 +58,7 @@ public class WundergroundClientTest {
 	}
 
 	@Test
-	public void When_IdIncorrect_Expect_GetWeatherByIdReturnsResponseErr() throws FileNotFoundException {
+	public void When_IdIncorrect_Expect_GetWeatherByZmwReturnsResponseErr() throws FileNotFoundException {
 		String cityId = "12345678.67864";
 		jadlerRespondWith(cityId, "query_not_found");
 
@@ -71,14 +78,14 @@ public class WundergroundClientTest {
 		assertNull(response.getResults());
 		assertNull(response.getError());
 	}
-	
+
 	@Test
 	public void When_ZmwGiven_Expect_BuildCorrectUrl() {
 		String zmw = "12323.12331";
-		String expected = API_URL + "/conditions/q/zmw:"+ zmw + ".xml";
-		
+		String expected = API_URL + "/conditions/q/zmw:" + zmw + ".xml";
+
 		String result = client.buildUrl(zmw);
-		
+
 		assertEquals(expected, result);
 	}
 }

@@ -28,7 +28,7 @@ public class WeatherServiceImpl {
 		this.supportedCities = supportedCities;
 
 		if (supportedCities.isEmpty()) {
-			log.error("The list of supported cities is empty.");
+			throw new IllegalStateException("List of supported cities is empty");
 		}
 
 		enableCacheIfNotNull(cache);

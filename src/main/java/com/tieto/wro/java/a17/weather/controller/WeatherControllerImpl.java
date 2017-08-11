@@ -20,6 +20,7 @@ import lombok.extern.log4j.Log4j;
 @Path("/weather")
 public class WeatherControllerImpl {
 
+	private final String WUNDER_URL = "http://api.wunderground.com/api/b6bfc129d8a2c4ea";
 	private WeatherServiceImpl service;
 
 	public WeatherControllerImpl() {
@@ -28,7 +29,8 @@ public class WeatherControllerImpl {
 	}
 
 	private void initWeatherService() {
-		service = new WeatherServiceImpl(App.SUPPORTED_CITIES, new WundergroundClient(), new DbCache());
+		WundergroundClient client = new WundergroundClient(WUNDER_URL);
+		service = new WeatherServiceImpl(App.SUPPORTED_CITIES, client, new DbCache());
 	}
 
 	@GET

@@ -3,24 +3,27 @@ package com.tieto.wro.java.a17.weather.service;
 import com.tieto.wro.java.a17.weather.model.City;
 import com.tieto.wro.java.a17.weather.model.CityWeather;
 import com.tieto.wro.java.a17.weather.provider.CityWeatherProvider;
+import com.tieto.wro.java.a17.weather.provider.database.DbCache;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
+import javax.ws.rs.NotFoundException;
 import static org.junit.Assert.*;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Matchers;
 import org.mockito.Mock;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 import org.mockito.runners.MockitoJUnitRunner;
 
-@Ignore
 @RunWith(MockitoJUnitRunner.class)
 public class WeatherServiceImplTest {
 
 	@Mock
 	CityWeatherProvider provider;
+	@Mock
+	DbCache cache;
 
 	private WeatherServiceImpl service;
 	private final String NOT_SUPP_CITY_NAME = "City";
@@ -59,8 +62,8 @@ public class WeatherServiceImplTest {
 		assertEquals(cityWeather, cwResult);
 	}
 
-	@Test
-	public void When_CityDoesntExist_Expect_GetCityWeatherReturnsNull() {
+	@Test(expected = IllegalArgumentException.class)
+	public void When_CityDoesntExist_Expect_ThrowsNotFoundException() {
 		CityWeather cwResult = service.getCityWeather(NOT_SUPP_CITY_NAME);
 
 		assertNull(cwResult);
@@ -75,6 +78,34 @@ public class WeatherServiceImplTest {
 
 		assertFalse(cwResult.contains(null));
 		assertFalse(cwResult.isEmpty());
+	}
+
+	@Test(expected = IllegalStateException.class)
+	public void When_SupportedCityEmpty_Expect_ThrowsIllegalStateException() {
+		WeatherServiceImpl wservice = new WeatherServiceImpl(Collections.emptyList(), provider);
+
+		assertNull(wservice);
+	}
+
+	@Test(expected = NotFoundException.class)
+	public void When_ProviderProblem_Expect_ThrowsNotFoundException() {
+		when(provider.getCityWeather(SUPP_CITY)).thenThrow(NotFoundException.class);
+
+		CityWeather cwResult = service.getCityWeather(SUPP_CITY_NAME);
+
+		assertNull(cwResult);
+	}
+
+	@Test(expected = UnsupportedOperationException.class)
+	public void When_UpdateAndNoCache_Expect_ThrowsUnsupportedOperationException() {
+		service.updateCache();
+	}
+
+	@Test
+	public void When_UpdateAndCacheEnabled_Expect_CacheUpdatedOnInit() {
+		service = new WeatherServiceImpl(SUPP_CITIES, provider, cache);
+
+		verify(cache, times(SUPP_CITIES.size())).saveOrUpdate(any());
 	}
 
 	private List<City> getSupportedCities() {

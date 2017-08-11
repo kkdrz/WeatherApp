@@ -3,6 +3,7 @@ package com.tieto.wro.java.a17.weather.provider.database;
 import com.tieto.wro.java.a17.weather.model.City;
 import com.tieto.wro.java.a17.weather.model.CityWeather;
 import com.tieto.wro.java.a17.weather.provider.CityWeatherProvider;
+import javax.persistence.NoResultException;
 import javax.ws.rs.NotFoundException;
 import lombok.extern.log4j.Log4j;
 import org.hibernate.HibernateException;
@@ -53,8 +54,7 @@ public class DbCache implements CityWeatherProvider {
 					.getSingleResult();
 
 			log.info("Quering location: \"" + location + "\" done.");
-		}
-		if (cw == null) {
+		} catch (NoResultException e) {
 			throw new NotFoundException("CityWeather for location: \"" + location + "\" not found in database.");
 		}
 		return cw;

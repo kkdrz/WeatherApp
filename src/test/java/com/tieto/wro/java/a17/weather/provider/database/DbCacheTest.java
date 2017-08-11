@@ -2,6 +2,7 @@ package com.tieto.wro.java.a17.weather.provider.database;
 
 import com.tieto.wro.java.a17.weather.model.CityWeather;
 import com.tieto.wro.java.a17.wunderground.TestObjectProvider;
+import javax.ws.rs.NotFoundException;
 import lombok.extern.log4j.Log4j;
 import static org.junit.Assert.*;
 import org.junit.Before;
@@ -31,8 +32,8 @@ public class DbCacheTest {
 		assertTrue(cw.equals(returned));
 	}
 
-	@Test
-	public void When_CityWeatherNotInDb_Expect_ReturnsNull() {
+	@Test(expected = NotFoundException.class)
+	public void When_CityWeatherNotInDb_Expect_ThrowNotFoundException() {
 		CityWeather returned = dbCache.query(city);
 
 		assertNull(returned);
