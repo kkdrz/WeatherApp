@@ -16,7 +16,7 @@ public class App extends ResourceConfig {
 
 	public App() {
 		loadSupportedCities();
-		register(new WeatherControllerImpl());
+		register(new WeatherControllerImpl(SUPPORTED_CITIES));
 		packages("com.tieto.wro.java.a17.weather.controller");
 	}
 
