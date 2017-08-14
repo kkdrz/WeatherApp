@@ -40,24 +40,24 @@ public class WeatherControllerImpl {
 
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)
-	public Response getCitiesWeathers() {
+	public List<CityWeather> getCitiesWeathers() {
 		log.info("getCitiesWeathers request invoked.");
 		List<CityWeather> entities = service.getCitiesWeathers();
-		return entities.isEmpty() ? responseNotFound() : responseOK(entities);
+		return entities.isEmpty() ? null : entities;
 	}
 
 	@GET
 	@Path("/{city}")
 	@Produces(MediaType.APPLICATION_JSON)
-	public Response getCityWeather(@PathParam("city") String cityName) {
+	public CityWeather getCityWeather(@PathParam("city") String cityName) {
 		log.info("getCityWeather request for city: \"" + cityName + "\" invoked.");
 		try {
 			City city = getCityIfSupported(cityName.toLowerCase());
 			CityWeather entity = service.getCityWeather(city);
-			return responseOK(entity);
+			return entity;
 		} catch (NotFoundException | IllegalArgumentException e) {
 			log.warn("CityWeather for city: \"" + cityName + "\" couldn't be found.", e);
-			return responseNotFound();
+			return null;
 		}
 	}
 
