@@ -38,11 +38,11 @@ public class WeatherServiceCache implements WeatherService {
 		return supportedCities;
 	}
 
-	private CityWeather getCityWeatherFromWeb(City city) {
+	CityWeather getCityWeatherFromWeb(City city) {
 		return client.getCityWeather(city);
 	}
 
-	private List<CityWeather> getCitiesWeathersFromWeb() {
+	List<CityWeather> getCitiesWeathersFromWeb() {
 		List<CityWeather> citiesWeathers = new ArrayList<>();
 		supportedCities.forEach((city) -> {
 			citiesWeathers.add(getCityWeatherFromWeb(city));

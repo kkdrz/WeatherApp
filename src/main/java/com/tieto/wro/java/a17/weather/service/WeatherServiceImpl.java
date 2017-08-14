@@ -30,10 +30,10 @@ public class WeatherServiceImpl implements WeatherService {
 		}
 	}
 
-//	@Override
-//	public void updateCache() throws UnsupportedOperationException {
-//		throw new UnsupportedOperationException("Cache not supported.");
-//	}
+	@Override
+	public void updateCache() throws UnsupportedOperationException {
+		throw new UnsupportedOperationException("Cache not supported.");
+	}
 
 	@Override
 	public List<City> getSupportedCities() {
@@ -41,7 +41,7 @@ public class WeatherServiceImpl implements WeatherService {
 	}
 
 	private void initSupportedCities(List<City> supportedCities) {
-		if(supportedCities == null || supportedCities.isEmpty()){
+		if (supportedCities == null || supportedCities.isEmpty()) {
 			throw new IllegalStateException("List of supported cities cannot be empty/null");
 		}
 		this.supportedCities = supportedCities;
