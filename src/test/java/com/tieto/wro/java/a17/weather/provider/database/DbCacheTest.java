@@ -21,6 +21,7 @@ public class DbCacheTest {
 		dbCache = new DbCache();
 	}
 
+
 	@Test
 	public void When_CityWeatherSavedIntoDB_Expect_QueryReturnsCityWeather() {
 		CityWeather cw = new TestObjectProvider().buildCityWeather(city);
@@ -31,6 +32,7 @@ public class DbCacheTest {
 		assertNotNull(returned);
 		assertTrue(cw.equals(returned));
 	}
+
 
 	@Test(expected = NotFoundException.class)
 	public void When_CityWeatherNotInDb_Expect_ThrowNotFoundException() {

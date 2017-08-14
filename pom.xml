@@ -28,7 +28,7 @@
 		<jetty.version>9.4.6.v20170531</jetty.version>
 		<log4j.version>1.2.17</log4j.version>
 		<soapUI.version>4.6.1</soapUI.version>
-		<hsqldb.version>1.8.0.10</hsqldb.version>
+		<hsqldb.version>2.4.0</hsqldb.version>
 		<hibernate.version>5.2.10.Final</hibernate.version>
 		<hibernate-annotations.version>3.5.6-Final</hibernate-annotations.version>
 	</properties>
@@ -179,7 +179,7 @@
        
 		<!--HSQLDB-->
 		<dependency>
-			<groupId>hsqldb</groupId>
+			<groupId>org.hsqldb</groupId>
 			<artifactId>hsqldb</artifactId>
 			<version>${hsqldb.version}</version>
 		</dependency>
@@ -227,4 +227,5 @@
 			</plugin>
 		</plugins>
 	</reporting>
+
 </project>

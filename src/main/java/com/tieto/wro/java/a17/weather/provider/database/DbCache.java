@@ -21,8 +21,9 @@ public class DbCache implements CityWeatherProvider {
 			factory = new Configuration()
 					.configure()
 					.buildSessionFactory();
+			
 		} catch (HibernateException ex) {
-			log.error("Initial SessionFactory creation failed." + ex);
+			log.error("Initial SessionFactory creation failed.", ex);
 			throw new ExceptionInInitializerError(ex);
 		}
 	}
@@ -39,6 +40,7 @@ public class DbCache implements CityWeatherProvider {
 			session.saveOrUpdate(cityWeather);
 			session.getTransaction().commit();
 			log.info("Saving/Updating done.");
+			session.close();
 		}
 	}
 
@@ -52,7 +54,7 @@ public class DbCache implements CityWeatherProvider {
 					.createQuery("FROM CityWeather cw where lower(cw.location) like :city")
 					.setParameter("city", "%" + location.toLowerCase() + "%")
 					.getSingleResult();
-
+			session.close();
 			log.info("Quering location: \"" + location + "\" done.");
 		} catch (NoResultException e) {
 			throw new NotFoundException("CityWeather for location: \"" + location + "\" not found in database.");
