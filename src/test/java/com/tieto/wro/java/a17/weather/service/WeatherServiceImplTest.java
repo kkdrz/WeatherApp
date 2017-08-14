@@ -2,8 +2,7 @@ package com.tieto.wro.java.a17.weather.service;
 
 import com.tieto.wro.java.a17.weather.model.City;
 import com.tieto.wro.java.a17.weather.model.CityWeather;
-import com.tieto.wro.java.a17.weather.provider.CityWeatherProvider;
-import com.tieto.wro.java.a17.weather.provider.database.DbCache;
+import com.tieto.wro.java.a17.weather.provider.client.WundergroundClient;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -21,50 +20,34 @@ import org.mockito.runners.MockitoJUnitRunner;
 public class WeatherServiceImplTest {
 
 	@Mock
-	CityWeatherProvider provider;
-	@Mock
-	DbCache cache;
+	WundergroundClient client;
 
 	private WeatherServiceImpl service;
-	private final String NOT_SUPP_CITY_NAME = "City";
-
+	private final City NOT_SUPP_CITY = new City("City", "213");
 	private final List<City> SUPP_CITIES = getSupportedCities();
 	private final City SUPP_CITY = SUPP_CITIES.get(0);
-	private final String SUPP_CITY_NAME = SUPP_CITY.getName();
 
 	@Before
 	public void setUp() {
-		service = new WeatherServiceImpl(SUPP_CITIES, provider);
-	}
-
-	@Test
-	public void When_CityLowerUpperCase_Expect_GetCityWeatherReturnsCorrectCW() {
-		CityWeather cityWeather = new CityWeather();
-		when(provider.getCityWeather(Matchers.any())).thenReturn(cityWeather);
-
-		CityWeather cwResultUpper = service.getCityWeather(SUPP_CITY_NAME.toUpperCase());
-		CityWeather cwResultLower = service.getCityWeather(SUPP_CITY_NAME.toLowerCase());
-
-		assertNotNull(cwResultUpper);
-		assertNotNull(cwResultLower);
-		assertEquals(cityWeather, cwResultUpper);
-		assertEquals(cityWeather, cwResultLower);
+		service = new WeatherServiceImpl(SUPP_CITIES, client);
 	}
 
 	@Test
 	public void When_SupportedCity_Expect_GetCityWeatherReturnsCorrectCW() {
 		CityWeather cityWeather = new CityWeather();
-		when(provider.getCityWeather(SUPP_CITY)).thenReturn(cityWeather);
+		when(client.getCityWeather(SUPP_CITY)).thenReturn(cityWeather);
 
-		CityWeather cwResult = service.getCityWeather(SUPP_CITY_NAME);
+		CityWeather cwResult = service.getCityWeather(SUPP_CITY);
 
 		assertNotNull(cwResult);
 		assertEquals(cityWeather, cwResult);
 	}
 
-	@Test(expected = IllegalArgumentException.class)
+	@Test(expected = NotFoundException.class)
 	public void When_CityDoesntExist_Expect_ThrowsNotFoundException() {
-		CityWeather cwResult = service.getCityWeather(NOT_SUPP_CITY_NAME);
+		when(client.getCityWeather(NOT_SUPP_CITY)).thenThrow(new NotFoundException());
+		
+		CityWeather cwResult = service.getCityWeather(NOT_SUPP_CITY);
 
 		assertNull(cwResult);
 	}
@@ -72,7 +55,7 @@ public class WeatherServiceImplTest {
 	@Test
 	public void When_GetCitiesWeathers_Expect_GetCitiesWeathersReturnsListWithNonNull() {
 		CityWeather cityWeather = new CityWeather();
-		when(provider.getCityWeather(Matchers.any(City.class))).thenReturn(cityWeather);
+		when(client.getCityWeather(Matchers.any(City.class))).thenReturn(cityWeather);
 
 		List<CityWeather> cwResult = service.getCitiesWeathers();
 
@@ -82,30 +65,24 @@ public class WeatherServiceImplTest {
 
 	@Test(expected = IllegalStateException.class)
 	public void When_SupportedCityEmpty_Expect_ThrowsIllegalStateException() {
-		WeatherServiceImpl wservice = new WeatherServiceImpl(Collections.emptyList(), provider);
+		WeatherServiceImpl wservice = new WeatherServiceImpl(Collections.emptyList(), client);
 
 		assertNull(wservice);
 	}
 
 	@Test(expected = NotFoundException.class)
 	public void When_ProviderProblem_Expect_ThrowsNotFoundException() {
-		when(provider.getCityWeather(SUPP_CITY)).thenThrow(NotFoundException.class);
+		when(client.getCityWeather(SUPP_CITY)).thenThrow(NotFoundException.class);
 
-		CityWeather cwResult = service.getCityWeather(SUPP_CITY_NAME);
+		CityWeather cwResult = service.getCityWeather(SUPP_CITY);
 
 		assertNull(cwResult);
 	}
 
+	
 	@Test(expected = UnsupportedOperationException.class)
 	public void When_UpdateAndNoCache_Expect_ThrowsUnsupportedOperationException() {
 		service.updateCache();
-	}
-
-	@Test
-	public void When_UpdateAndCacheEnabled_Expect_CacheUpdatedOnInit() {
-		service = new WeatherServiceImpl(SUPP_CITIES, provider, cache);
-
-		verify(cache, times(SUPP_CITIES.size())).saveOrUpdate(any());
 	}
 
 	private List<City> getSupportedCities() {

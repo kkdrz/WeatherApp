@@ -13,11 +13,11 @@ import lombok.extern.log4j.Log4j;
 public class WeatherServiceImpl implements WeatherService {
 
 	private final WundergroundClient client;
-	private final List<City> supportedCities;
+	private List<City> supportedCities;
 
 	public WeatherServiceImpl(List<City> supportedCities, WundergroundClient client) {
 		this.client = client;
-		this.supportedCities = supportedCities;
+		initSupportedCities(supportedCities);
 	}
 
 	@Override
@@ -30,9 +30,21 @@ public class WeatherServiceImpl implements WeatherService {
 		}
 	}
 
+//	@Override
+//	public void updateCache() throws UnsupportedOperationException {
+//		throw new UnsupportedOperationException("Cache not supported.");
+//	}
+
 	@Override
 	public List<City> getSupportedCities() {
 		return supportedCities;
+	}
+
+	private void initSupportedCities(List<City> supportedCities) {
+		if(supportedCities == null || supportedCities.isEmpty()){
+			throw new IllegalStateException("List of supported cities cannot be empty/null");
+		}
+		this.supportedCities = supportedCities;
 	}
 
 }

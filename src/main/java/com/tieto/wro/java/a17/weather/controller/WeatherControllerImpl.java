@@ -52,7 +52,7 @@ public class WeatherControllerImpl {
 	public Response getCityWeather(@PathParam("city") String cityName) {
 		log.info("getCityWeather request for city: \"" + cityName + "\" invoked.");
 		try {
-			City city = getCityIfSupported(cityName);
+			City city = getCityIfSupported(cityName.toLowerCase());
 			CityWeather entity = service.getCityWeather(city);
 			return responseOK(entity);
 		} catch (NotFoundException | IllegalArgumentException e) {
