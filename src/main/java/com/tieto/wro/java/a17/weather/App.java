@@ -6,6 +6,7 @@ import java.util.List;
 import javax.ws.rs.ApplicationPath;
 import lombok.extern.log4j.Log4j;
 import org.glassfish.jersey.server.ResourceConfig;
+import org.glassfish.jersey.server.mvc.jsp.JspMvcFeature;
 
 @Log4j
 @ApplicationPath("")
@@ -16,8 +17,9 @@ public class App extends ResourceConfig {
 
 	public App() {
 		loadSupportedCities();
-		register(new WeatherControllerImpl(SUPPORTED_CITIES));
 		packages("com.tieto.wro.java.a17.weather.controller");
+		register(JspMvcFeature.class);
+		register(new WeatherControllerImpl(SUPPORTED_CITIES));
 	}
 
 	private void loadSupportedCities() {
