@@ -19,6 +19,7 @@ public class App extends ResourceConfig {
 		loadSupportedCities();
 		packages("com.tieto.wro.java.a17.weather.controller");
 		register(JspMvcFeature.class);
+		property(JspMvcFeature.TEMPLATE_BASE_PATH, "/WEB-INF/jsp");
 		register(new WeatherControllerImpl(SUPPORTED_CITIES));
 	}
 

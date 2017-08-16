@@ -6,7 +6,9 @@ import com.tieto.wro.java.a17.weather.provider.client.WundergroundClient;
 import com.tieto.wro.java.a17.weather.provider.database.DbCache;
 import com.tieto.wro.java.a17.weather.service.WeatherService;
 import com.tieto.wro.java.a17.weather.service.WeatherServiceCache;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import javax.inject.Singleton;
 import javax.ws.rs.GET;
 import javax.ws.rs.NotFoundException;
@@ -16,6 +18,7 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import lombok.extern.log4j.Log4j;
+import org.glassfish.jersey.server.mvc.Viewable;
 
 @Log4j
 @Singleton
@@ -85,21 +88,20 @@ public class WeatherControllerImpl {
 		throw new IllegalArgumentException("Requested city \"" + cityName + "\" is not supported.");
 	}
 
-	private Response responseOK(Object entity) {
-		return Response.status(Response.Status.OK)
-				.entity(entity)
-				.build();
-	}
-
-	private Response responseNotFound() {
-		return Response.status(Response.Status.NOT_FOUND)
-				.entity("No results could be found.")
-				.build();
-	}
-
 	private Response responseNoCache() {
 		return Response.status(Response.Status.NOT_IMPLEMENTED)
 				.entity("Cache is not enabled.")
 				.build();
 	}
+
+	@GET
+	@Path("/view")
+    @Produces(MediaType.TEXT_HTML)
+    public Viewable index() {
+		log.info("VIEW");
+        Map<String, String> model = new HashMap<>();
+        model.put("hello", "Hello");
+        model.put("world", "World");
+        return new Viewable("/index", model);
+    }
 }
