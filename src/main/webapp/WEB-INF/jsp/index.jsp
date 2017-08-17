@@ -21,12 +21,20 @@
 			background: -o-linear-gradient(top,rgba(16, 50, 104,0), rgba(16, 50, 104,1)); /* For Opera 11.1 to 12.0 */
 			background: -moz-linear-gradient(bottom, rgba(16, 50, 104,0), rgba(16, 50, 104,1)); /* For Firefox 3.6 to 15 */
 			background: linear-gradient(to top, rgba(16, 50, 104,0), rgba(16, 50, 104,1)); /* Standard syntax (must be last) */
+			padding-top: 8px;
+		}
+
+		#update {
+			color: white;
+			margin-bottom: 5px;
 		}
 	</style>
 </head>
 
 <body>
+
 	<div id="grad1" style="min-height: 1000px">
+		<div id="update">${it[0].weatherDate}</div>
 		<div class="container">
 
 			<div class="input-group">
