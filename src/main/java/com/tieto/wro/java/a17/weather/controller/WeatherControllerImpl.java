@@ -3,12 +3,9 @@ package com.tieto.wro.java.a17.weather.controller;
 import com.tieto.wro.java.a17.weather.model.City;
 import com.tieto.wro.java.a17.weather.model.CityWeather;
 import com.tieto.wro.java.a17.weather.provider.client.WundergroundClient;
-import com.tieto.wro.java.a17.weather.provider.database.DbCache;
 import com.tieto.wro.java.a17.weather.service.WeatherService;
-import com.tieto.wro.java.a17.weather.service.WeatherServiceCache;
-import java.util.HashMap;
+import com.tieto.wro.java.a17.weather.service.WeatherServiceImpl;
 import java.util.List;
-import java.util.Map;
 import javax.inject.Singleton;
 import javax.ws.rs.GET;
 import javax.ws.rs.NotFoundException;
@@ -18,11 +15,11 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import lombok.extern.log4j.Log4j;
-import org.glassfish.jersey.server.mvc.Viewable;
+import org.glassfish.jersey.server.mvc.Template;
 
 @Log4j
 @Singleton
-@Path("/weather")
+@Path("/")
 public class WeatherControllerImpl {
 
 	private final String WUNDER_URL = "http://localhost:8089/api.wunderground.com/api/b6bfc129d8a2c4ea";
@@ -37,11 +34,12 @@ public class WeatherControllerImpl {
 
 	private void initWeatherService() {
 		WundergroundClient client = new WundergroundClient(WUNDER_URL);
-		//service = new WeatherServiceImpl(supportedCities, client);
-		service = new WeatherServiceCache(new DbCache(), supportedCities, client);
+		service = new WeatherServiceImpl(supportedCities, client);
+		//service = new WeatherServiceCache(new DbCache(), supportedCities, client);
 	}
 
 	@GET
+	@Path("/weather")
 	@Produces(MediaType.APPLICATION_JSON)
 	public List<CityWeather> getCitiesWeathers() {
 		log.info("getCitiesWeathers request invoked.");
@@ -50,7 +48,7 @@ public class WeatherControllerImpl {
 	}
 
 	@GET
-	@Path("/{city}")
+	@Path("/weather/{city}")
 	@Produces(MediaType.APPLICATION_JSON)
 	public CityWeather getCityWeather(@PathParam("city") String cityName) {
 		log.info("getCityWeather request for city: \"" + cityName + "\" invoked.");
@@ -65,7 +63,7 @@ public class WeatherControllerImpl {
 	}
 
 	@GET
-	@Path("/update")
+	@Path("/weather/update")
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response updateCache() {
 		try {
@@ -95,13 +93,15 @@ public class WeatherControllerImpl {
 	}
 
 	@GET
-	@Path("/view")
+	@Path("/weather/view")
+	@Template(name = "/index.jsp")
     @Produces(MediaType.TEXT_HTML)
-    public Viewable index() {
+    public List<CityWeather> viewAll() {
 		log.info("VIEW");
-        Map<String, String> model = new HashMap<>();
-        model.put("hello", "Hello");
-        model.put("world", "World");
-        return new Viewable("/index", model);
+        List <CityWeather> citiesWeathers = getCitiesWeathers();
+		citiesWeathers.sort((CityWeather o1, CityWeather o2) -> {
+			return o1.getLocation().compareToIgnoreCase(o2.getLocation());
+		});
+		return citiesWeathers;
     }
 }
