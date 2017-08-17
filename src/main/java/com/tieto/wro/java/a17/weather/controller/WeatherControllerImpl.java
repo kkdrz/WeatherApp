@@ -75,6 +75,13 @@ public class WeatherControllerImpl {
 			return responseNoCache();
 		}
 	}
+	
+	@GET
+	@Path("/weather/cities")
+	@Produces(MediaType.APPLICATION_JSON)
+	public List<City> getSupportedCities() {
+			return supportedCities;
+	}
 
 	private City getCityIfSupported(String cityName) {
 		cityName = cityName.toLowerCase();
@@ -93,15 +100,24 @@ public class WeatherControllerImpl {
 	}
 
 	@GET
-	@Path("/weather/view")
+	@Path("/view/weather")
 	@Template(name = "/index.jsp")
     @Produces(MediaType.TEXT_HTML)
     public List<CityWeather> viewAll() {
-		log.info("VIEW");
+		log.info("View all cityWeathers");
         List <CityWeather> citiesWeathers = getCitiesWeathers();
 		citiesWeathers.sort((CityWeather o1, CityWeather o2) -> {
 			return o1.getLocation().compareToIgnoreCase(o2.getLocation());
 		});
 		return citiesWeathers;
+    }
+	
+	@GET
+	@Path("/view/weather/{city}")
+	@Template(name = "/city.jsp")
+    @Produces(MediaType.TEXT_HTML)
+    public CityWeather viewAll(@PathParam("city") String city) {
+		log.info("View City " + city);
+		return getCityWeather(city);
     }
 }
