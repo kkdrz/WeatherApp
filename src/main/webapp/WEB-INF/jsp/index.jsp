@@ -6,6 +6,8 @@
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 		<title>WeatherService</title>
+		<link rel="shortcut icon" href="/favicon.ico" type="image/x-icon">
+		<link rel="icon" href="/favicon.ico" type="image/x-icon">
 
 		<link rel="stylesheet" href="/static/css/bootstrap.min.css"> 
 		<link rel="stylesheet" href="/static/css/easy-autocomplete.min.css"> 
@@ -42,7 +44,6 @@
 					<input id="city-search" class="form-control" placeholder="Search..." onkeyup="searchCity()"/>
 				</div>
 
-
 				<c:forEach var="weather" items="${it}" varStatus="count">
 					<button type="button" class="col-xs-12 col-sm-12 col-md-12 btn btn-info"
 							data-toggle="collapse" href="#w${count.index}">
@@ -51,7 +52,25 @@
 							<h3>${weather.location}</h3>
 						</div>	
 						<div class="col-xs-12 col-sm-12 col-md-12">
-							<h3 class="text-center">${weather.temperatureCelsius} °C</h3>
+
+							<h3 class="text-center" style="color:
+								<c:choose>
+									<c:when test = "${weather.temperatureCelsius <= 16}">
+										#0000cc
+									</c:when>
+
+									<c:when test = "${weather.temperatureCelsius < 25}">
+										#006d0c
+									</c:when>
+
+									<c:when test = "${weather.temperatureCelsius >= 25}">
+										#cc0033
+									</c:when>
+
+								</c:choose>
+
+								">${weather.temperatureCelsius} °C</h3>
+
 							<h5 class="text-center">${weather.weather}</h5>
 						</div>
 
@@ -70,12 +89,12 @@
 
 		$("#update").click(function () {
 			$("*").addClass("fa-spin");
+			$.ajax("http://localhost:8080/weather/update");
+
 			setTimeout(function () {
 				$("*").removeClass("fa-spin");
 				location.reload();
 			}, 3000);
-
-			$.ajax("http://localhost:8080/weather/update");
 		});
 
 		function searchCity() {
