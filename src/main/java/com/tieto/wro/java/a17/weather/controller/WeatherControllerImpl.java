@@ -24,7 +24,7 @@ import org.glassfish.jersey.server.mvc.Template;
 @Path("/")
 public class WeatherControllerImpl {
 
-	private final String WUNDER_URL = "http://localhost:8089/api.wunderground.com/api/b6bfc129d8a2c4ea";
+	private final String WUNDER_URL = "http://api.wunderground.com/api/b6bfc129d8a2c4ea";
 	private final List<City> supportedCities;
 	private WeatherService service;
 
