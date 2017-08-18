@@ -3,8 +3,10 @@ package com.tieto.wro.java.a17.weather.controller;
 import com.tieto.wro.java.a17.weather.model.City;
 import com.tieto.wro.java.a17.weather.model.CityWeather;
 import com.tieto.wro.java.a17.weather.provider.client.WundergroundClient;
+import com.tieto.wro.java.a17.weather.provider.database.DbCache;
 import com.tieto.wro.java.a17.weather.service.WeatherService;
-import com.tieto.wro.java.a17.weather.service.WeatherServiceImpl;
+import com.tieto.wro.java.a17.weather.service.WeatherServiceCache;
+import java.util.ArrayList;
 import java.util.List;
 import javax.inject.Singleton;
 import javax.ws.rs.GET;
@@ -34,8 +36,8 @@ public class WeatherControllerImpl {
 
 	private void initWeatherService() {
 		WundergroundClient client = new WundergroundClient(WUNDER_URL);
-		service = new WeatherServiceImpl(supportedCities, client);
-		//service = new WeatherServiceCache(new DbCache(), supportedCities, client);
+		//service = new WeatherServiceImpl(supportedCities, client);
+		service = new WeatherServiceCache(new DbCache(), supportedCities, client);
 	}
 
 	@GET
@@ -75,12 +77,14 @@ public class WeatherControllerImpl {
 			return responseNoCache();
 		}
 	}
-	
+
 	@GET
 	@Path("/weather/cities")
 	@Produces(MediaType.APPLICATION_JSON)
 	public List<City> getSupportedCities() {
-			return supportedCities;
+		List<String> cities = new ArrayList<>();
+		supportedCities.forEach((c) -> cities.add(c.getName()));
+		return supportedCities;
 	}
 
 	private City getCityIfSupported(String cityName) {
@@ -102,22 +106,22 @@ public class WeatherControllerImpl {
 	@GET
 	@Path("/view/weather")
 	@Template(name = "/index.jsp")
-    @Produces(MediaType.TEXT_HTML)
-    public List<CityWeather> viewAll() {
+	@Produces(MediaType.TEXT_HTML)
+	public List<CityWeather> viewAll() {
 		log.info("View all cityWeathers");
-        List <CityWeather> citiesWeathers = getCitiesWeathers();
+		List<CityWeather> citiesWeathers = getCitiesWeathers();
 		citiesWeathers.sort((CityWeather o1, CityWeather o2) -> {
 			return o1.getLocation().compareToIgnoreCase(o2.getLocation());
 		});
 		return citiesWeathers;
-    }
-	
+	}
+
 	@GET
 	@Path("/view/weather/{city}")
 	@Template(name = "/city.jsp")
-    @Produces(MediaType.TEXT_HTML)
-    public CityWeather viewAll(@PathParam("city") String city) {
+	@Produces(MediaType.TEXT_HTML)
+	public CityWeather viewCity(@PathParam("city") String city) {
 		log.info("View City " + city);
 		return getCityWeather(city);
-    }
+	}
 }
