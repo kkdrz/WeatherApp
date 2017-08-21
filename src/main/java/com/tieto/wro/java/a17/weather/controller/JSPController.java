@@ -15,8 +15,8 @@ import org.glassfish.jersey.server.mvc.Template;
 @Path("/view/weather")
 public class JSPController extends WeatherController {
 	
-	public JSPController(List<City> supportedCities) {
-		super(supportedCities);
+	public JSPController(List<City> supportedCities, String apiUrl) {
+		super(supportedCities, apiUrl);
 	}
 	
 	@GET

@@ -1,7 +1,7 @@
 package com.tieto.wro.java.a17.weather;
 
-import com.tieto.wro.java.a17.weather.controller.RESTController;
 import com.tieto.wro.java.a17.weather.controller.JSPController;
+import com.tieto.wro.java.a17.weather.controller.RESTController;
 import com.tieto.wro.java.a17.weather.model.City;
 import java.util.List;
 import javax.ws.rs.ApplicationPath;
@@ -15,14 +15,15 @@ public class App extends ResourceConfig {
 
 	public static List<City> SUPPORTED_CITIES;
 	private static final String CITIES_JSON_PATH = "src/main/resources/cities.json";
+	private final String apiUrl = "http://localhost:8089/api.wunderground.com/api/b6bfc129d8a2c4ea";
 
 	public App() {
 		loadSupportedCities();
 		packages("com.tieto.wro.java.a17.weather.controller");
 		register(JspMvcFeature.class);
 		property(JspMvcFeature.TEMPLATE_BASE_PATH, "/WEB-INF/jsp");
-		register(new RESTController(SUPPORTED_CITIES));
-		register(new JSPController(SUPPORTED_CITIES));
+		register(new RESTController(SUPPORTED_CITIES, apiUrl));
+		register(new JSPController(SUPPORTED_CITIES, apiUrl));
 
 	}
 

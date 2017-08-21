@@ -18,17 +18,18 @@ import lombok.extern.log4j.Log4j;
 @Getter
 public abstract class WeatherController {
 
-	private final String WUNDER_URL = "http://localhost:8089/api.wunderground.com/api/b6bfc129d8a2c4ea";
+	private String API_URL;
 	private final List<City> supportedCities;
 	private WeatherService service;
 
-	public WeatherController(List<City> supportedCities) {
+	public WeatherController(List<City> supportedCities, String apiUrl) {
 		this.supportedCities = supportedCities;
+		this.API_URL = apiUrl;
 		initWeatherService();
 	}
 
 	protected void initWeatherService() {
-		WundergroundClient client = new WundergroundClient(WUNDER_URL);
+		WundergroundClient client = new WundergroundClient(API_URL);
 		service = new WeatherServiceCache(new DbCache(), supportedCities, client);
 	}
 
