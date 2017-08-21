@@ -7,9 +7,8 @@ import com.tieto.wro.java.a17.weather.provider.database.DbCache;
 import java.util.ArrayList;
 import java.util.List;
 import javax.inject.Inject;
-import lombok.Setter;
 
-@Setter
+
 public class WeatherServiceCache implements WeatherService {
 
 	@Inject private final DbCache cache;

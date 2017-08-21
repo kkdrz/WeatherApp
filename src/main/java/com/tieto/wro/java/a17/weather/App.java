@@ -4,11 +4,13 @@ import com.tieto.wro.java.a17.weather.controller.JSPController;
 import com.tieto.wro.java.a17.weather.controller.RESTController;
 import com.tieto.wro.java.a17.weather.model.City;
 import com.tieto.wro.java.a17.weather.provider.client.WundergroundClient;
+import com.tieto.wro.java.a17.weather.provider.client.WundergroundResponseTransformer;
 import com.tieto.wro.java.a17.weather.provider.database.DbCache;
 import com.tieto.wro.java.a17.weather.service.WeatherService;
 import com.tieto.wro.java.a17.weather.service.WeatherServiceCache;
 import java.util.List;
 import javax.ws.rs.ApplicationPath;
+import javax.ws.rs.client.Client;
 import lombok.extern.log4j.Log4j;
 import org.glassfish.hk2.utilities.binding.AbstractBinder;
 import org.glassfish.jersey.server.ResourceConfig;
@@ -24,7 +26,7 @@ public class App extends ResourceConfig {
 
 	public App() {
 		loadSupportedCities();
-		
+
 		packages("com.tieto.wro.java.a17.weather.controller");
 		register(JspMvcFeature.class);
 		property(JspMvcFeature.TEMPLATE_BASE_PATH, "/WEB-INF/jsp");
@@ -42,20 +44,25 @@ public class App extends ResourceConfig {
 		}
 		log.info("Loading supported cities done.");
 	}
-	
+
 	public class DependencyBinder extends AbstractBinder {
 
-	@Override
-	protected void configure() {
-		bind(DbCache.class).to(DbCache.class);
-		
-		WundergroundClient client = new WundergroundClient(API_URL);
-		bind(client).to(WundergroundClient.class);
+		@Override
+		protected void configure() {
+			bind(SUPPORTED_CITIES).to(List.class).named("SUPPORTED_CITIES");
+			bind(API_URL).to(String.class).named("API_URL");
 
-		//WeatherServiceCache service = new WeatherServiceCache(new DbCache(), SUPPORTED_CITIES, client);
-		bind(WeatherServiceCache.class).to(WeatherService.class);
-		
+			bind(DbCache.class).to(DbCache.class);
+			
+			bind(Client.class).to(Client.class);
+			bind(WundergroundResponseTransformer.class).to(WundergroundResponseTransformer.class);
+
+			WundergroundClient client = new WundergroundClient(API_URL);
+			bind(client).to(WundergroundClient.class);
+
+			WeatherServiceCache service = new WeatherServiceCache(new DbCache(), SUPPORTED_CITIES, client);
+			bind(service).to(WeatherService.class);
+		}
 	}
-}
 
 }
