@@ -53,23 +53,20 @@
 						</div>	
 						<div class="col-xs-12 col-sm-12 col-md-12">
 
-							<h3 class="text-center" style="color:
-								<c:choose>
-									<c:when test = "${weather.temperatureCelsius <= 16}">
-										#0000cc
-									</c:when>
 
-									<c:when test = "${weather.temperatureCelsius < 25}">
-										#006d0c
-									</c:when>
+							<c:choose>
+								<c:when test = "${weather.temperatureCelsius <= 16}">
+									<h3 class="text-center" style="color:#0000cc">${weather.temperatureCelsius} °C</h3>
+								</c:when>
+								<c:when test = "${weather.temperatureCelsius < 25}">
+									<h3 class="text-center" style="color:#006d0c">${weather.temperatureCelsius} °C</h3>
+								</c:when>
+								<c:when test = "${weather.temperatureCelsius >= 25}">
+									<h3 class="text-center" style="color:#cc0033">${weather.temperatureCelsius} °C</h3>	
+								</c:when>
+							</c:choose>
 
-									<c:when test = "${weather.temperatureCelsius >= 25}">
-										#cc0033
-									</c:when>
 
-								</c:choose>
-
-								">${weather.temperatureCelsius} °C</h3>
 
 							<h5 class="text-center">${weather.weather}</h5>
 						</div>
@@ -90,12 +87,13 @@
 		$("#update").click(function () {
 			$("*").addClass("fa-spin");
 			$.ajax("http://localhost:8080/weather/update");
-
+			flyingSatellite();
 			setTimeout(function () {
 				$("*").removeClass("fa-spin");
 				location.reload();
 			}, 3000);
 		});
+
 
 		function searchCity() {
 			input = document.getElementById("city-search");
