@@ -87,7 +87,7 @@
 		$("#update").click(function () {
 			$("*").addClass("fa-spin");
 			$.ajax("http://localhost:8080/weather/update");
-			flyingSatellite();
+			
 			setTimeout(function () {
 				$("*").removeClass("fa-spin");
 				location.reload();

@@ -1,6 +1,7 @@
 package com.tieto.wro.java.a17.weather;
 
 import com.tieto.wro.java.a17.weather.controller.WeatherControllerImpl;
+import com.tieto.wro.java.a17.weather.controller.WeatherJspController;
 import com.tieto.wro.java.a17.weather.model.City;
 import java.util.List;
 import javax.ws.rs.ApplicationPath;
@@ -21,6 +22,8 @@ public class App extends ResourceConfig {
 		register(JspMvcFeature.class);
 		property(JspMvcFeature.TEMPLATE_BASE_PATH, "/WEB-INF/jsp");
 		register(new WeatherControllerImpl(SUPPORTED_CITIES));
+		register(new WeatherJspController(SUPPORTED_CITIES));
+
 	}
 
 	private void loadSupportedCities() {
