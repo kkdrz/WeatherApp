@@ -4,6 +4,7 @@ import com.tieto.wro.java.a17.weather.model.City;
 import com.tieto.wro.java.a17.weather.model.CityWeather;
 import com.tieto.wro.java.a17.weather.provider.client.WundergroundClient;
 import java.util.List;
+import javax.inject.Inject;
 import javax.inject.Singleton;
 import javax.ws.rs.NotFoundException;
 import lombok.extern.log4j.Log4j;
@@ -12,7 +13,7 @@ import lombok.extern.log4j.Log4j;
 @Singleton
 public class WeatherServiceImpl implements WeatherService {
 
-	private final WundergroundClient client;
+	@Inject private final WundergroundClient client;
 	private List<City> supportedCities;
 
 	public WeatherServiceImpl(List<City> supportedCities, WundergroundClient client) {

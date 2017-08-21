@@ -2,11 +2,9 @@ package com.tieto.wro.java.a17.weather.controller;
 
 import com.tieto.wro.java.a17.weather.model.City;
 import com.tieto.wro.java.a17.weather.model.CityWeather;
-import com.tieto.wro.java.a17.weather.provider.client.WundergroundClient;
-import com.tieto.wro.java.a17.weather.provider.database.DbCache;
 import com.tieto.wro.java.a17.weather.service.WeatherService;
-import com.tieto.wro.java.a17.weather.service.WeatherServiceCache;
 import java.util.List;
+import javax.inject.Inject;
 import javax.ws.rs.NotFoundException;
 import javax.ws.rs.core.Response;
 import lombok.Getter;
@@ -20,17 +18,11 @@ public abstract class WeatherController {
 
 	private String API_URL;
 	private final List<City> supportedCities;
-	private WeatherService service;
+	@Inject private WeatherService service;
 
 	public WeatherController(List<City> supportedCities, String apiUrl) {
 		this.supportedCities = supportedCities;
 		this.API_URL = apiUrl;
-		initWeatherService();
-	}
-
-	protected void initWeatherService() {
-		WundergroundClient client = new WundergroundClient(API_URL);
-		service = new WeatherServiceCache(new DbCache(), supportedCities, client);
 	}
 
 	protected City getCityIfSupported(String cityName) {
