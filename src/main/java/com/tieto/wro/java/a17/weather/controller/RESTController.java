@@ -15,9 +15,9 @@ import lombok.extern.log4j.Log4j;
 @Log4j
 @Singleton
 @Path("/")
-public class WeatherControllerImpl extends WeatherController {
+public class RESTController extends WeatherController {
 
-	public WeatherControllerImpl(List<City> supportedCities) {
+	public RESTController(List<City> supportedCities) {
 		super(supportedCities);
 		log.info("WundergroundController instantiated.");
 	}

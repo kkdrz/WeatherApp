@@ -13,9 +13,9 @@ import org.glassfish.jersey.server.mvc.Template;
 @Log4j
 @Singleton
 @Path("/view/weather")
-public class WeatherJspController extends WeatherController {
+public class JSPController extends WeatherController {
 	
-	public WeatherJspController(List<City> supportedCities) {
+	public JSPController(List<City> supportedCities) {
 		super(supportedCities);
 	}
 	
