@@ -45,7 +45,7 @@
 				</div>
 
 				<c:forEach var="weather" items="${it}" varStatus="count">
-					<button type="button" class="col-xs-12 col-sm-12 col-md-12 btn btn-info"
+					<button id="b${count.index}" type="button" class="col-xs-12 col-sm-12 col-md-12 btn btn-info"
 							data-toggle="collapse" href="#w${count.index}">
 
 						<div class="col-xs-12 col-sm-12 col-md-12">

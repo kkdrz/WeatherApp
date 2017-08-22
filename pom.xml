@@ -33,6 +33,7 @@
 		<hibernate-annotations.version>3.5.6-Final</hibernate-annotations.version>
 		<jstl.version>1.2</jstl.version>
 		<servlet.version>4.0.0-b07</servlet.version>
+		<selenium.version>3.5.1</selenium.version>
 	</properties>
     
 	<build>
@@ -123,6 +124,14 @@
 		</dependency>
         
 		<!--Testing-->
+		
+		<dependency>
+			<groupId>org.seleniumhq.selenium</groupId>
+			<artifactId>selenium-java</artifactId>
+			<version>${selenium.version}</version>
+			<scope>test</scope>
+		</dependency>
+
 		<dependency>
 			<groupId>org.hamcrest</groupId>
 			<artifactId>hamcrest-core</artifactId>
