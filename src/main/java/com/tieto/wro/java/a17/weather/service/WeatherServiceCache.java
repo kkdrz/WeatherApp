@@ -6,16 +6,17 @@ import com.tieto.wro.java.a17.weather.provider.client.WundergroundClient;
 import com.tieto.wro.java.a17.weather.provider.database.DbCache;
 import java.util.ArrayList;
 import java.util.List;
-import javax.inject.Inject;
+import javax.ws.rs.core.Context;
+import lombok.extern.log4j.Log4j;
 
-
+@Log4j
 public class WeatherServiceCache implements WeatherService {
 
-	@Inject private final DbCache cache;
-	@Inject private final WundergroundClient client;
+	private DbCache cache;
+	private WundergroundClient client;
 	private final List<City> supportedCities;
 
-	public WeatherServiceCache(DbCache cache, List<City> supportedCities, WundergroundClient client) {
+	public WeatherServiceCache(@Context DbCache cache, List<City> supportedCities, @Context WundergroundClient client) {
 		this.cache = cache;
 		this.supportedCities = supportedCities;
 		this.client = client;

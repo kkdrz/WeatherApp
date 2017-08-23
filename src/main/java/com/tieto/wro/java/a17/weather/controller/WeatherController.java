@@ -5,7 +5,6 @@ import com.tieto.wro.java.a17.weather.model.CityWeather;
 import com.tieto.wro.java.a17.weather.service.WeatherService;
 import java.util.List;
 import javax.inject.Inject;
-import javax.inject.Named;
 import javax.ws.rs.NotFoundException;
 import javax.ws.rs.core.Response;
 import lombok.Getter;
@@ -17,12 +16,12 @@ import lombok.extern.log4j.Log4j;
 @Getter
 public abstract class WeatherController {
 
+	@Inject
+	private WeatherService service;
 	private String API_URL;
 	private final List<City> supportedCities;
-	@Inject private WeatherService service;
 
-	@Inject
-	public WeatherController(@Named("SUPPORTED_CITIES") List<City> supportedCities,@Named("API_URL") String apiUrl) {
+	public WeatherController(List<City> supportedCities, String apiUrl) {
 		this.supportedCities = supportedCities;
 		this.API_URL = apiUrl;
 	}

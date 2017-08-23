@@ -1,17 +1,18 @@
 package com.tieto.wro.java.a17.weather;
 
 import java.util.List;
-import lombok.extern.log4j.Log4j;
 import org.junit.AfterClass;
 import static org.junit.Assert.*;
 import org.junit.BeforeClass;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
 
-@Log4j
+
+@Ignore
 public class JspSeleniumTest {
 
 	private static WebDriver driver;
