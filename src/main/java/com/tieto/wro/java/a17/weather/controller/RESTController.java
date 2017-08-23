@@ -3,7 +3,6 @@ package com.tieto.wro.java.a17.weather.controller;
 import com.tieto.wro.java.a17.weather.model.City;
 import com.tieto.wro.java.a17.weather.model.CityWeather;
 import java.util.List;
-import javax.inject.Singleton;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
@@ -13,13 +12,13 @@ import javax.ws.rs.core.Response;
 import lombok.extern.log4j.Log4j;
 
 @Log4j
-@Singleton
+//@Singleton
 @Path("/")
 public class RESTController extends WeatherController {
 
 	public RESTController(List<City> supportedCities, String apiUrl) {
 		super(supportedCities, apiUrl);
-		log.info("WundergroundController instantiated.");
+		log.info("RESTController instantiated.");
 	}
 
 	@Override

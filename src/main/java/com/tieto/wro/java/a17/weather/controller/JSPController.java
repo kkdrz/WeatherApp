@@ -3,7 +3,6 @@ package com.tieto.wro.java.a17.weather.controller;
 import com.tieto.wro.java.a17.weather.model.City;
 import com.tieto.wro.java.a17.weather.model.CityWeather;
 import java.util.List;
-import javax.inject.Singleton;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
@@ -11,27 +10,28 @@ import lombok.extern.log4j.Log4j;
 import org.glassfish.jersey.server.mvc.Template;
 
 @Log4j
-@Singleton
+//@Singleton
 @Path("/view/weather")
 public class JSPController extends WeatherController {
-	
+
 	public JSPController(List<City> supportedCities, String apiUrl) {
 		super(supportedCities, apiUrl);
+		log.info("JSPController instantiated.");
 	}
-	
+
 	@GET
 	@Template(name = "/index.jsp")
 	public List<CityWeather> getAllCitiesWeathersSorted() {
 		log.info("View all cityWeathers");
 		List<CityWeather> citiesWeathers = super.getCitiesWeathers();
-		
+
 		citiesWeathers.sort((CityWeather o1, CityWeather o2) -> {
 			return o1.getLocation().compareToIgnoreCase(o2.getLocation());
 		});
-		
+
 		return citiesWeathers;
 	}
-	
+
 	@GET
 	@Path("/{city}")
 	@Template(name = "/city.jsp")
