@@ -1,11 +1,3 @@
-/nbproject/
-/target/
-/.settings/
-.classpath
-.project
-nb-configuration.xml
-nbactions.xml
-soapui.txt
-soapui-errors.txt
-*.txt
-*.log
+/common/target/
+/jerseyapp/target/
+/nioapp/target/
