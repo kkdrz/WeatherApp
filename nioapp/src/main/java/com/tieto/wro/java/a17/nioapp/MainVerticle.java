@@ -5,7 +5,7 @@ import io.vertx.core.DeploymentOptions;
 import lombok.extern.log4j.Log4j;
 
 @Log4j
-public class MyVerticle extends AbstractVerticle {
+public class MainVerticle extends AbstractVerticle {
 
 	@Override
 	public void start() throws Exception {

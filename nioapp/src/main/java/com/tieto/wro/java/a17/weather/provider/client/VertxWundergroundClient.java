@@ -21,14 +21,12 @@ public class VertxWundergroundClient extends AbstractVerticle {
 		eventBus = vertx.eventBus();
 
 		eventBus.consumer(VertxWundergroundClient.CLIENT_ADDRESS, message -> {
-			//JsonObject city = new JsonObject((String) message.body());
 			City city = Json.decodeValue((String) message.body(), City.class);
 			client.get("/api.wunderground.com/api/b6bfc129d8a2c4ea/conditions/q/zmw:" + city.getZmw() + ".xml")
 					.send(ar -> {
 						message.reply(ar.result().bodyAsString());
 					});
 		});
-
 	}
 
 	private void initWebClient() {
