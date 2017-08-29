@@ -2,7 +2,6 @@ package com.tieto.wro.java.a17.weather;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.type.TypeFactory;
 import com.tieto.wro.java.a17.weather.model.City;
 import java.io.File;
 import java.io.IOException;
@@ -16,29 +15,15 @@ import lombok.extern.log4j.Log4j;
 public class SupportedCitiesProvider {
 
 	private final ObjectMapper mapper;
+	private List<City> supportedCities;
 
-	public SupportedCitiesProvider() {
+	public SupportedCitiesProvider(String path) {
 		mapper = new ObjectMapper();
+		loadSupportedCities(path);
 	}
 
-	public List<City> getSupportedCities(String path) {
-		List<City> cities = transformMapToList(getSupportedCitiesMap(path));
-		log.info("Reading file: " + path + " completed.");
-		return cities;
-	}
-
-	List<City> getSupportedCitiesList(String path) {
-		List<City> cities = new ArrayList<>();
-		try {
-			log.info("Reading cities list from " + path);
-			cities = mapper.readValue(
-					new File(path),
-					TypeFactory.defaultInstance().constructCollectionType(List.class, City.class)
-			);
-		} catch (IOException ex) {
-			log.error("Cannot read file: " + path + "\n" + ex);
-		}
-		return cities;
+	private void loadSupportedCities(String path) {
+		supportedCities = transformMapToList(getSupportedCitiesMap(path));
 	}
 
 	Map<String, String> getSupportedCitiesMap(String path) {
@@ -61,6 +46,24 @@ public class SupportedCitiesProvider {
 		});
 
 		return citiesList;
+	}
+
+	public City getCityIfSupported(String cityName) throws IllegalArgumentException {
+		cityName = cityName.toLowerCase();
+		for (City c : supportedCities) {
+			if (cityName.equals(c.getName())) {
+				return c;
+			}
+		}
+		throw new IllegalArgumentException("Requested city \"" + cityName + "\" is not supported.");
+	}
+
+	public List<City> getSupportedCities() {
+		return supportedCities;
+	}
+
+	public void setPath(String path) {
+		loadSupportedCities(path);
 	}
 
 }

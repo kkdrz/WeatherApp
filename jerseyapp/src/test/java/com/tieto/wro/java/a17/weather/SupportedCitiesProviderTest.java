@@ -13,15 +13,7 @@ public class SupportedCitiesProviderTest {
 
 	@Before
 	public void setUp() {
-		provider = new SupportedCitiesProvider();
-	}
-
-	@Test
-	public void When_FileExist_Expect_GetSupportedCitiesListReturnsListOfCities() {
-		List<City> cities = provider.getSupportedCitiesList("src/test/resources/cities_objects.json");
-
-		assertNotNull(cities);
-		assertFalse(cities.isEmpty());
+		provider = new SupportedCitiesProvider("src/test/resources/cities.json");
 	}
 
 	@Test
@@ -35,13 +27,6 @@ public class SupportedCitiesProviderTest {
 	@Test
 	public void When_FileDoesntExist_Expect_ReturnsEmptyMap() {
 		Map<String, String> cities = provider.getSupportedCitiesMap("wrong/path");
-
-		assertTrue(cities.isEmpty());
-	}
-
-	@Test
-	public void When_FileDoesntExist_Expect_ReturnsEmptyList() {
-		List<City> cities = provider.getSupportedCitiesList("wrong/path");
 
 		assertTrue(cities.isEmpty());
 	}

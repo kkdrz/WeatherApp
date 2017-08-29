@@ -4,9 +4,8 @@ import com.tieto.wro.java.a17.weather.controller.JSPController;
 import com.tieto.wro.java.a17.weather.controller.RESTController;
 import com.tieto.wro.java.a17.weather.model.City;
 import com.tieto.wro.java.a17.weather.provider.client.WundergroundClient;
-import com.tieto.wro.java.a17.weather.provider.database.DbCache;
 import com.tieto.wro.java.a17.weather.service.WeatherService;
-import com.tieto.wro.java.a17.weather.service.WeatherServiceCache;
+import com.tieto.wro.java.a17.weather.service.WeatherServiceImpl;
 import java.util.List;
 import javax.ws.rs.ApplicationPath;
 import lombok.extern.log4j.Log4j;
@@ -36,7 +35,7 @@ public class App extends ResourceConfig {
 
 	private void loadSupportedCities() {
 		log.info("Loading supported cities.");
-		SUPPORTED_CITIES = new SupportedCitiesProvider().getSupportedCities(CITIES_JSON_PATH);
+		SUPPORTED_CITIES = new SupportedCitiesProvider(CITIES_JSON_PATH).getSupportedCities();
 		if (SUPPORTED_CITIES == null || SUPPORTED_CITIES.isEmpty()) {
 			log.error("There is no cities in SUPPORTED_CITY. Check if path (" + CITIES_JSON_PATH + ") is correct and if JSON file exists.");
 		}
@@ -48,12 +47,12 @@ public class App extends ResourceConfig {
 		@Override
 		protected void configure() {
 			WundergroundClient client = new WundergroundClient(API_URL);
-			WeatherServiceCache cacheService = new WeatherServiceCache(new DbCache(), SUPPORTED_CITIES, client);
+//			WeatherServiceCache cacheService = new WeatherServiceCache(new DbCache(), SUPPORTED_CITIES, client);
 
-			bind(cacheService).to(WeatherService.class);
+//			bind(cacheService).to(WeatherService.class);
 
-//			WeatherServiceImpl service = new WeatherServiceImpl(SUPPORTED_CITIES, client);
-//			bind(service).to(WeatherService.class);
+			WeatherServiceImpl service = new WeatherServiceImpl(SUPPORTED_CITIES, client);
+			bind(service).to(WeatherService.class);
 		}
 	}
 

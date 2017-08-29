@@ -1,3 +1,4 @@
 {
-	"http.port": 8080
+	"http.port": 8080,
+	"cities.file": "src/main/resources/cities.json"
 }

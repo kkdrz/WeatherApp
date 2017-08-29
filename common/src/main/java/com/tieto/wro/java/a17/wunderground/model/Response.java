@@ -129,7 +129,7 @@ public class Response {
 
 	@Data
 	@XmlAccessorType(XmlAccessType.FIELD)
-	@XmlType(name = "", propOrder = {"image", "displayLocation", "observationLocation", "estimated", "stationId",
+	@XmlType(name = "current_observation", propOrder = {"image", "displayLocation", "observationLocation", "estimated", "stationId",
 		"observationTime", "observationTimeRfc822", "observationEpoch", "localTimeRfc822", "localEpoch",
 		"localTzString", "localTzLong", "localTzOffset", "weather", "temperatureString", "tempF", "tempC",
 		"relativeHumidity", "windString", "windDir", "windDegrees", "windMph", "windGustMph", "windKph",
