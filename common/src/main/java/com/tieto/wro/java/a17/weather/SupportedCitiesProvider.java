@@ -17,16 +17,16 @@ public class SupportedCitiesProvider {
 	private final ObjectMapper mapper;
 	private List<City> supportedCities;
 
-	public SupportedCitiesProvider(String path) {
+	public SupportedCitiesProvider(String path) throws IOException {
 		mapper = new ObjectMapper();
 		loadSupportedCities(path);
 	}
 
-	private void loadSupportedCities(String path) {
+	private void loadSupportedCities(String path) throws IOException {
 		supportedCities = transformMapToList(getSupportedCitiesMap(path));
 	}
 
-	Map<String, String> getSupportedCitiesMap(String path) {
+	Map<String, String> getSupportedCitiesMap(String path) throws IOException {
 		Map<String, String> map = new HashMap<>();
 		try {
 			log.info("Reading cities map from " + path);
@@ -34,6 +34,7 @@ public class SupportedCitiesProvider {
 			});
 		} catch (IOException ex) {
 			log.error("Cannot read file: " + path + "\n" + ex);
+			throw ex;
 		}
 		return map;
 	}
@@ -62,7 +63,7 @@ public class SupportedCitiesProvider {
 		return supportedCities;
 	}
 
-	public void setPath(String path) {
+	public void setPath(String path) throws IOException {
 		loadSupportedCities(path);
 	}
 

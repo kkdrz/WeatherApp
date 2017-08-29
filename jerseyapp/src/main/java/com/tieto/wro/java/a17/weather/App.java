@@ -6,6 +6,7 @@ import com.tieto.wro.java.a17.weather.model.City;
 import com.tieto.wro.java.a17.weather.provider.client.WundergroundClient;
 import com.tieto.wro.java.a17.weather.service.WeatherService;
 import com.tieto.wro.java.a17.weather.service.WeatherServiceImpl;
+import java.io.IOException;
 import java.util.List;
 import javax.ws.rs.ApplicationPath;
 import lombok.extern.log4j.Log4j;
@@ -21,7 +22,7 @@ public class App extends ResourceConfig {
 	private static final String CITIES_JSON_PATH = "src/main/resources/cities.json";
 	private static final String API_URL = "http://localhost:8089/api.wunderground.com/api/b6bfc129d8a2c4ea";
 
-	public App() {
+	public App() throws IOException {
 		loadSupportedCities();
 
 		packages("com.tieto.wro.java.a17.weather.controller", "com.tieto.wro.java.a17.weather.service");
@@ -33,7 +34,7 @@ public class App extends ResourceConfig {
 
 	}
 
-	private void loadSupportedCities() {
+	private void loadSupportedCities() throws IOException {
 		log.info("Loading supported cities.");
 		SUPPORTED_CITIES = new SupportedCitiesProvider(CITIES_JSON_PATH).getSupportedCities();
 		if (SUPPORTED_CITIES == null || SUPPORTED_CITIES.isEmpty()) {
