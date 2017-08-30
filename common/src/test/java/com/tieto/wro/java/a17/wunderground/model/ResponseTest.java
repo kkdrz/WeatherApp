@@ -1,5 +1,6 @@
 package com.tieto.wro.java.a17.wunderground.model;
 
+
 import com.tieto.wro.java.a17.wunderground.TestObjectProvider;
 import static org.junit.Assert.*;
 import org.junit.Test;

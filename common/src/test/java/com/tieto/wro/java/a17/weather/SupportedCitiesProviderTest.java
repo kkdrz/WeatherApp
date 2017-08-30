@@ -1,5 +1,6 @@
 package com.tieto.wro.java.a17.weather;
 
+import com.tieto.wro.java.a17.weather.SupportedCitiesProvider;
 import com.tieto.wro.java.a17.weather.model.City;
 import java.io.IOException;
 import java.util.HashSet;

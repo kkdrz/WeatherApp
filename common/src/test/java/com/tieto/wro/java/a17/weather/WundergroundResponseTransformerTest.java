@@ -1,4 +1,4 @@
-package com.tieto.wro.java.a17.weather.provider.client;
+package com.tieto.wro.java.a17.weather;
 
 import com.tieto.wro.java.a17.weather.WundergroundResponseTransformer;
 import com.tieto.wro.java.a17.weather.model.CityWeather;
