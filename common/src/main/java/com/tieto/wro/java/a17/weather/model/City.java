@@ -1,8 +1,10 @@
 package com.tieto.wro.java.a17.weather.model;
 
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 
 @Data
+@EqualsAndHashCode(of="zmw")
 public class City {
 
 	private String name;

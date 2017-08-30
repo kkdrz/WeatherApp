@@ -1,8 +1,9 @@
 package com.tieto.wro.java.a17.weather.controller;
 
-import com.tieto.wro.java.a17.weather.model.CityWeather;
 import com.tieto.wro.java.a17.weather.model.City;
+import com.tieto.wro.java.a17.weather.model.CityWeather;
 import com.tieto.wro.java.a17.weather.service.WeatherService;
+import java.util.AbstractCollection;
 import java.util.List;
 import javax.inject.Inject;
 import javax.ws.rs.NotFoundException;
@@ -16,24 +17,11 @@ import lombok.extern.log4j.Log4j;
 @Getter
 public abstract class WeatherController {
 
-	@Inject
-	private WeatherService service;
+	@Inject private WeatherService service;
 	private String API_URL;
-	private final List<City> supportedCities;
 
-	public WeatherController(List<City> supportedCities, String apiUrl) {
-		this.supportedCities = supportedCities;
+	public WeatherController(String apiUrl) {
 		this.API_URL = apiUrl;
-	}
-
-	protected City getCityIfSupported(String cityName) {
-		cityName = cityName.toLowerCase();
-		for (City c : supportedCities) {
-			if (cityName.equals(c.getName())) {
-				return c;
-			}
-		}
-		throw new IllegalArgumentException("Requested city \"" + cityName + "\" is not supported.");
 	}
 
 	protected List<CityWeather> getCitiesWeathers() {
@@ -45,8 +33,7 @@ public abstract class WeatherController {
 	protected CityWeather getCityWeather(String cityName) {
 		log.info("getCityWeather request for city: \"" + cityName + "\" invoked.");
 		try {
-			City city = getCityIfSupported(cityName.toLowerCase());
-			CityWeather entity = getService().getCityWeather(city);
+			CityWeather entity = getService().getCityWeather(cityName);
 			return entity;
 		} catch (NotFoundException | IllegalArgumentException e) {
 			log.warn("CityWeather for city: \"" + cityName + "\" couldn't be found.", e);
@@ -69,5 +56,9 @@ public abstract class WeatherController {
 		return Response.status(Response.Status.NOT_IMPLEMENTED)
 				.entity("Cache is not enabled.")
 				.build();
+	}
+	
+	public AbstractCollection<City> getSupportedCities() {
+		return getService().getSupportedCities();
 	}
 }

@@ -1,7 +1,6 @@
 package com.tieto.wro.java.a17.weather.controller;
 
 import com.tieto.wro.java.a17.weather.model.CityWeather;
-import com.tieto.wro.java.a17.weather.model.City;
 import java.util.List;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
@@ -14,8 +13,8 @@ import org.glassfish.jersey.server.mvc.Template;
 @Path("/view/weather")
 public class JSPController extends WeatherController {
 
-	public JSPController(List<City> supportedCities, String apiUrl) {
-		super(supportedCities, apiUrl);
+	public JSPController(String apiUrl) {
+		super(apiUrl);
 		log.info("JSPController instantiated.");
 	}
 

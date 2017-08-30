@@ -7,6 +7,7 @@ import io.vertx.core.AbstractVerticle;
 import io.vertx.core.Future;
 import io.vertx.core.eventbus.EventBus;
 import io.vertx.core.json.Json;
+import io.vertx.core.json.JsonObject;
 import io.vertx.ext.web.Router;
 import io.vertx.ext.web.RoutingContext;
 import java.io.IOException;
@@ -17,10 +18,13 @@ import lombok.extern.log4j.Log4j;
 @Log4j
 public class VertxController extends AbstractVerticle {
 
+	private final String CONFIG_CITIES_FILE = "cities.file";
+	private final String CONFIG_HTTP_PORT = "http.port";
+	private final int DEFAULT_HTTP_PORT = 8080;
+
 	private Router router;
 	private EventBus eventBus;
 	private SupportedCitiesProvider suppCitiesProvider;
-	private final String CONFIG_CITIES_FILE = "cities.file";
 
 	@Override
 	public void start(Future<Void> startFuture) throws Exception {
@@ -37,15 +41,20 @@ public class VertxController extends AbstractVerticle {
 	}
 
 	public void getCityWeather(RoutingContext context) {
-		String cityName = context.request().getParam("city");
-		City city = suppCitiesProvider.getCityIfSupported(cityName);
-
-		eventBus.send(VertxWeatherService.SERVICE_ADDRESS, Json.encode(city), reply -> {
+		JsonObject cityJson = findCityAndEncodeJson(context.request().getParam("city"));
+		
+		eventBus.send(VertxWeatherService.SERVICE_ADDRESS, cityJson, reply -> {
 			context
 					.response()
 					.putHeader("content-type", "application/json")
 					.end((String) reply.result().body());
 		});
+	}
+
+	private JsonObject findCityAndEncodeJson(String cityName) {
+		City city = suppCitiesProvider.getCityIfSupported(cityName);
+		JsonObject cityJson = new JsonObject(Json.encode(city));
+		return cityJson;
 	}
 
 	private Future<Void> initSuppCitiesProvider() {
@@ -66,7 +75,7 @@ public class VertxController extends AbstractVerticle {
 		vertx
 				.createHttpServer()
 				.requestHandler(router::accept)
-				.listen(config().getInteger("http.port", 8080), (ar) -> {
+				.listen(config().getInteger(CONFIG_HTTP_PORT, DEFAULT_HTTP_PORT), (ar) -> {
 					if (ar.succeeded()) {
 						log.info("HTTP server running.");
 						future.complete();

@@ -5,9 +5,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.tieto.wro.java.a17.weather.model.City;
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
+import java.util.HashSet;
 import java.util.Map;
 import lombok.extern.log4j.Log4j;
 
@@ -15,7 +14,7 @@ import lombok.extern.log4j.Log4j;
 public class SupportedCitiesProvider {
 
 	private final ObjectMapper mapper;
-	private List<City> supportedCities;
+	private HashSet<City> supportedCities;
 
 	public SupportedCitiesProvider(String path) throws IOException {
 		mapper = new ObjectMapper();
@@ -39,14 +38,18 @@ public class SupportedCitiesProvider {
 		return map;
 	}
 
-	List<City> transformMapToList(Map<String, String> citiesMap) {
-		List<City> citiesList = new ArrayList<>();
+	HashSet<City> transformMapToList(Map<String, String> citiesMap) {
+		HashSet<City> citiesList = new HashSet<>();
 
 		citiesMap.entrySet().forEach((entry) -> {
 			citiesList.add(new City(entry.getKey(), entry.getValue()));
 		});
 
 		return citiesList;
+	}
+	
+	public boolean isSupported(City city) {
+		return supportedCities.contains(city);
 	}
 
 	public City getCityIfSupported(String cityName) throws IllegalArgumentException {
@@ -59,7 +62,7 @@ public class SupportedCitiesProvider {
 		throw new IllegalArgumentException("Requested city \"" + cityName + "\" is not supported.");
 	}
 
-	public List<City> getSupportedCities() {
+	public HashSet<City> getSupportedCities() {
 		return supportedCities;
 	}
 

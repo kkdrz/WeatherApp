@@ -2,12 +2,14 @@ package com.tieto.wro.java.a17.weather;
 
 import com.tieto.wro.java.a17.weather.controller.JSPController;
 import com.tieto.wro.java.a17.weather.controller.RESTController;
-import com.tieto.wro.java.a17.weather.model.City;
 import com.tieto.wro.java.a17.weather.provider.client.WundergroundClient;
+import com.tieto.wro.java.a17.weather.provider.database.DbCache;
 import com.tieto.wro.java.a17.weather.service.WeatherService;
+import com.tieto.wro.java.a17.weather.service.WeatherServiceCache;
 import com.tieto.wro.java.a17.weather.service.WeatherServiceImpl;
 import java.io.IOException;
-import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.ws.rs.ApplicationPath;
 import lombok.extern.log4j.Log4j;
 import org.glassfish.hk2.utilities.binding.AbstractBinder;
@@ -18,42 +20,44 @@ import org.glassfish.jersey.server.mvc.jsp.JspMvcFeature;
 @ApplicationPath("")
 public class App extends ResourceConfig {
 
-	private static List<City> SUPPORTED_CITIES;
 	private static final String CITIES_JSON_PATH = "src/main/resources/cities.json";
 	private static final String API_URL = "http://localhost:8089/api.wunderground.com/api/b6bfc129d8a2c4ea";
 
-	public App() throws IOException {
-		loadSupportedCities();
-
+	public App() {
 		packages("com.tieto.wro.java.a17.weather.controller", "com.tieto.wro.java.a17.weather.service");
 		register(JspMvcFeature.class);
 		property(JspMvcFeature.TEMPLATE_BASE_PATH, "/WEB-INF/jsp");
 		register(new DependencyBinder());
-		register(new RESTController(SUPPORTED_CITIES, API_URL));
-		register(new JSPController(SUPPORTED_CITIES, API_URL));
+		register(new RESTController(API_URL));
+		register(new JSPController(API_URL));
 
-	}
-
-	private void loadSupportedCities() throws IOException {
-		log.info("Loading supported cities.");
-		SUPPORTED_CITIES = new SupportedCitiesProvider(CITIES_JSON_PATH).getSupportedCities();
-		if (SUPPORTED_CITIES == null || SUPPORTED_CITIES.isEmpty()) {
-			log.error("There is no cities in SUPPORTED_CITY. Check if path (" + CITIES_JSON_PATH + ") is correct and if JSON file exists.");
-		}
-		log.info("Loading supported cities done.");
 	}
 
 	public class DependencyBinder extends AbstractBinder {
 
+		WundergroundClient client;
+		WeatherServiceImpl service;
+		WeatherServiceCache cacheService;
+		SupportedCitiesProvider suppCitiesProvider;
+
+		public void instantiateFields() throws IOException {
+			client = new WundergroundClient(API_URL);
+			suppCitiesProvider = new SupportedCitiesProvider(CITIES_JSON_PATH);
+			service = new WeatherServiceImpl(client, suppCitiesProvider);
+			cacheService = new WeatherServiceCache(client, suppCitiesProvider, new DbCache());
+		}
+
 		@Override
 		protected void configure() {
-			WundergroundClient client = new WundergroundClient(API_URL);
-//			WeatherServiceCache cacheService = new WeatherServiceCache(new DbCache(), SUPPORTED_CITIES, client);
-
-//			bind(cacheService).to(WeatherService.class);
-
-			WeatherServiceImpl service = new WeatherServiceImpl(SUPPORTED_CITIES, client);
-			bind(service).to(WeatherService.class);
+			try {
+				instantiateFields();
+				//bind(cacheService).to(WeatherService.class);
+				bind(service).to(WeatherService.class);
+				bind(suppCitiesProvider).to(SupportedCitiesProvider.class);
+			} catch (IOException ex) {
+				log.error("SupportedCitiesProvider failed. Check if path (" + CITIES_JSON_PATH + ") is correct and if JSON file exists.", ex);
+				Logger.getLogger(App.class.getName()).log(Level.SEVERE, null, ex);
+			}
 		}
 	}
 

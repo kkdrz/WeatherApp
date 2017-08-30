@@ -2,7 +2,7 @@ package com.tieto.wro.java.a17.weather;
 
 import com.tieto.wro.java.a17.weather.model.City;
 import java.io.IOException;
-import java.util.List;
+import java.util.HashSet;
 import java.util.Map;
 import static org.junit.Assert.*;
 import org.junit.Before;
@@ -39,11 +39,11 @@ public class SupportedCitiesProviderTest {
 		map.put("lodz", "00000.7.234234");
 		map.put("khykyh", "01231.213433");
 
-		List<City> list = provider.transformMapToList(map);
+		HashSet<City> list = provider.transformMapToList(map);
 
 		assertNotNull(list);
 		assertTrue(!list.isEmpty());
-		assertTrue(map.get("wroclaw").equals(list.get(0).getZmw()));
+		assertTrue(list.contains(new City("wroclaw", map.get("wroclaw"))));
 	}
 
 }
