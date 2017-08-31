@@ -1,5 +1,6 @@
 package com.tieto.wro.java.a17.weather.provider.client;
 
+import com.tieto.wro.java.a17.nioapp.Config;
 import com.tieto.wro.java.a17.weather.model.City;
 import io.vertx.core.AbstractVerticle;
 import io.vertx.core.eventbus.EventBus;
@@ -12,7 +13,6 @@ import lombok.extern.log4j.Log4j;
 @Log4j
 public class VertxWundergroundClient extends AbstractVerticle {
 
-	public static final String CLIENT_ADDRESS = "wunder.client";
 	private WebClient client;
 	private EventBus eventBus;
 
@@ -21,7 +21,7 @@ public class VertxWundergroundClient extends AbstractVerticle {
 		initWebClient();
 		eventBus = vertx.eventBus();
 
-		eventBus.consumer(VertxWundergroundClient.CLIENT_ADDRESS, this::onMessage);
+		eventBus.consumer(Config.CLIENT_ADDRESS, this::onMessage);
 	}
 
 	public void onMessage(Message<JsonObject> message) {

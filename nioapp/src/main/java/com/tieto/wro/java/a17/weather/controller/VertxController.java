@@ -1,10 +1,11 @@
 package com.tieto.wro.java.a17.weather.controller;
 
+import com.tieto.wro.java.a17.nioapp.Config;
 import com.tieto.wro.java.a17.weather.SupportedCitiesProvider;
 import com.tieto.wro.java.a17.weather.model.City;
-import com.tieto.wro.java.a17.weather.service.VertxWeatherService;
 import io.vertx.core.AbstractVerticle;
 import io.vertx.core.Future;
+import io.vertx.core.eventbus.DeliveryOptions;
 import io.vertx.core.eventbus.EventBus;
 import io.vertx.core.json.Json;
 import io.vertx.core.json.JsonObject;
@@ -18,10 +19,6 @@ import lombok.extern.log4j.Log4j;
 @Log4j
 public class VertxController extends AbstractVerticle {
 
-	private final String CONFIG_CITIES_FILE = "cities.file";
-	private final String CONFIG_HTTP_PORT = "http.port";
-	private final int DEFAULT_HTTP_PORT = 8080;
-
 	private Router router;
 	private EventBus eventBus;
 	private SupportedCitiesProvider suppCitiesProvider;
@@ -34,22 +31,32 @@ public class VertxController extends AbstractVerticle {
 	}
 
 	public void getAllCitiesWeathers(RoutingContext context) {
-		context
-				.response()
-				.putHeader("content-type", "application/json")
-				.end("GET ALL CWs");
-	}
-
-	public void getCityWeather(RoutingContext context) {
-		JsonObject cityJson = findCityAndEncodeJson(context.request().getParam("city"));
+		log.info("SUPPORTED JSON: \n" + Json.encode(suppCitiesProvider.getSupportedCities()));
 		
-		eventBus.send(VertxWeatherService.SERVICE_ADDRESS, cityJson, reply -> {
+		DeliveryOptions options = new DeliveryOptions().addHeader("action", "all");
+
+		eventBus.send(Config.SERVICE_ADDRESS, Json.encode(suppCitiesProvider.getSupportedCities()), options, reply -> {
+			log.info("reply");
 			context
 					.response()
 					.putHeader("content-type", "application/json")
 					.end((String) reply.result().body());
 		});
 	}
+
+	public void getCityWeather(RoutingContext context) {
+		JsonObject cityJson = findCityAndEncodeJson(context.request().getParam("city"));
+
+		DeliveryOptions options = new DeliveryOptions().addHeader("action", "single");
+
+		eventBus.send(Config.SERVICE_ADDRESS, cityJson, options, reply -> {
+			context
+					.response()
+					.putHeader("content-type", "application/json")
+					.end((String) reply.result().body());
+		});
+	}
+	
 
 	private JsonObject findCityAndEncodeJson(String cityName) {
 		City city = suppCitiesProvider.getCityIfSupported(cityName);
@@ -60,7 +67,7 @@ public class VertxController extends AbstractVerticle {
 	private Future<Void> initSuppCitiesProvider() {
 		Future<Void> future = Future.future();
 		try {
-			suppCitiesProvider = new SupportedCitiesProvider(config().getString(CONFIG_CITIES_FILE));
+			suppCitiesProvider = new SupportedCitiesProvider(config().getString(Config.CITIES_FILE));
 			future.complete();
 		} catch (IOException ex) {
 			Logger.getLogger(VertxController.class.getName()).log(Level.SEVERE, null, ex);
@@ -75,7 +82,7 @@ public class VertxController extends AbstractVerticle {
 		vertx
 				.createHttpServer()
 				.requestHandler(router::accept)
-				.listen(config().getInteger(CONFIG_HTTP_PORT, DEFAULT_HTTP_PORT), (ar) -> {
+				.listen(config().getInteger(Config.HTTP_PORT, Config.DEFAULT_HTTP_PORT), (ar) -> {
 					if (ar.succeeded()) {
 						log.info("HTTP server running.");
 						future.complete();
