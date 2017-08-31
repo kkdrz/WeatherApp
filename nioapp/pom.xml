@@ -16,6 +16,7 @@
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<vertx.version>3.4.2</vertx.version>
+		<jackson.xml.version>2.9.0</jackson.xml.version>
 	</properties>
 
 	<dependencies>
@@ -27,11 +28,6 @@
 			<version>${vertx.version}</version>
 		</dependency>
 		
-		<dependency>
-			<groupId>com.fasterxml.jackson.dataformat</groupId>
-			<artifactId>jackson-dataformat-xml</artifactId>
-			<version>2.9.0</version>
-		</dependency>
 		
 		<dependency>
 			<groupId>io.vertx</groupId>
@@ -45,6 +41,19 @@
 			<version>${vertx.version}</version>
 		</dependency>
 		
+		<dependency>
+			<groupId>io.vertx</groupId>
+			<artifactId>vertx-rx-java</artifactId>
+			<version>${vertx.version}</version>
+		</dependency>
+		
+		<!--Jackson-->
+		<dependency>
+			<groupId>com.fasterxml.jackson.dataformat</groupId>
+			<artifactId>jackson-dataformat-xml</artifactId>
+			<version>${jackson.xml.version}</version>
+			
+		</dependency>
 		<!--Lombok-->
 		<dependency>
 			<groupId>org.projectlombok</groupId>
