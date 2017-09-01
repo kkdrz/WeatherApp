@@ -15,9 +15,6 @@ public class MainVerticle extends AbstractVerticle {
 
 		vertx.deployVerticle("com.tieto.wro.java.a17.weather.service.WeatherServiceVerticle",
 				new DeploymentOptions().setInstances(4));
-
-		vertx.deployVerticle("com.tieto.wro.java.a17.weather.provider.client.VertxWundergroundClient",
-				new DeploymentOptions().setInstances(4));
 	}
 
 }
