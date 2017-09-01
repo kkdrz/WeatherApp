@@ -18,8 +18,6 @@ import io.vertx.ext.web.client.WebClient;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import lombok.extern.log4j.Log4j;
 
 @Log4j
@@ -102,7 +100,7 @@ public class WeatherServiceProxyImpl implements WeatherServiceProxy {
 			Response response = mapper.readValue(responseXML, Response.class);
 			return transformer.transform(response);
 		} catch (IOException ex) {
-			Logger.getLogger(VertxWeatherService.class.getName()).log(Level.SEVERE, null, ex);
+			log.error(ex);
 		}
 		return null;
 	}
