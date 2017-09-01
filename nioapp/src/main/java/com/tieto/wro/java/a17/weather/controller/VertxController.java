@@ -3,16 +3,18 @@ package com.tieto.wro.java.a17.weather.controller;
 import com.tieto.wro.java.a17.nioapp.Config;
 import com.tieto.wro.java.a17.weather.SupportedCitiesProvider;
 import com.tieto.wro.java.a17.weather.model.City;
+import com.tieto.wro.java.a17.weather.service.WeatherService;
 import io.vertx.core.AbstractVerticle;
 import io.vertx.core.Future;
 import io.vertx.core.json.Json;
+import io.vertx.core.json.JsonArray;
 import io.vertx.ext.web.Router;
 import io.vertx.ext.web.RoutingContext;
 import java.io.IOException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.stream.Collectors;
 import lombok.extern.log4j.Log4j;
-import com.tieto.wro.java.a17.weather.service.WeatherService;
 
 @Log4j
 public class VertxController extends AbstractVerticle {
@@ -30,7 +32,14 @@ public class VertxController extends AbstractVerticle {
 	}
 
 	public void getAllCitiesWeathers(RoutingContext context) {
-		service.getAllCitiesWeathers(Json.encode(suppCitiesProvider.getSupportedCities()), reply -> {
+		JsonArray citiesIds = new JsonArray(Json.encode(
+				suppCitiesProvider.getSupportedCities()
+						.stream()
+						.map(City::getZmw)
+						.collect(Collectors.toList())
+		));
+
+		service.getAllCitiesWeathers(citiesIds, reply -> {
 			context
 					.response()
 					.putHeader("content-type", "application/json")
@@ -39,9 +48,9 @@ public class VertxController extends AbstractVerticle {
 	}
 
 	public void getCityWeather(RoutingContext context) {
-		String cityJson = findCityAndEncodeJson(context.request().getParam("city"));
+		String cityId = getIdOfCity(context.request().getParam("city"));
 
-		service.getCityWeather(cityJson, reply -> {
+		service.getCityWeather(cityId, reply -> {
 			context
 					.response()
 					.putHeader("content-type", "application/json")
@@ -50,9 +59,9 @@ public class VertxController extends AbstractVerticle {
 
 	}
 
-	private String findCityAndEncodeJson(String cityName) {
+	private String getIdOfCity(String cityName) {
 		City city = suppCitiesProvider.getCityIfSupported(cityName);
-		return Json.encode(city);
+		return city.getZmw();
 	}
 
 	private Future<Void> initSuppCitiesProvider() {

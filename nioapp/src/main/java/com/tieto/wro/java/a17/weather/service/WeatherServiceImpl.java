@@ -5,7 +5,6 @@ import com.fasterxml.jackson.dataformat.xml.XmlMapper;
 import com.fasterxml.jackson.module.jaxb.JaxbAnnotationIntrospector;
 import com.tieto.wro.java.a17.nioapp.Config;
 import com.tieto.wro.java.a17.weather.WundergroundResponseTransformer;
-import com.tieto.wro.java.a17.weather.model.City;
 import com.tieto.wro.java.a17.weather.model.CityWeather;
 import com.tieto.wro.java.a17.wunderground.model.Response;
 import io.vertx.core.AsyncResult;
@@ -37,9 +36,8 @@ public class WeatherServiceImpl implements WeatherService {
 	}
 
 	@Override
-	public WeatherService getCityWeather(String cityJson, Handler<AsyncResult<String>> resultHandler) {
-		City city = Json.decodeValue(cityJson, City.class);
-		client.get(new Formatter().format(Config.API_PATH, city.getZmw()).toString())
+	public WeatherService getCityWeather(String cityId, Handler<AsyncResult<String>> resultHandler) {
+		client.get(new Formatter().format(Config.API_PATH, cityId).toString())
 				.send(ar -> {
 					CityWeather cityWeather = parseXMLtoCityWeather(ar.result().body().toString());
 					resultHandler.handle(Future.succeededFuture(Json.encode(cityWeather)));
@@ -48,12 +46,11 @@ public class WeatherServiceImpl implements WeatherService {
 	}
 
 	@Override
-	public WeatherService getAllCitiesWeathers(String citiesJson, Handler<AsyncResult<String>> resultHandler) {
+	public WeatherService getAllCitiesWeathers(JsonArray citiesIds, Handler<AsyncResult<String>> resultHandler) {
 		JsonArray citiesWeathers = new JsonArray();
-		JsonArray cities = new JsonArray(citiesJson);
 		log.info("Przed compositem");
 
-		getRequestsFutures(cities, citiesWeathers, reply -> {
+		getRequestsFutures(citiesIds, citiesWeathers, reply -> {
 			CompositeFuture.all(reply.result()).setHandler(ar -> {
 				if (ar.succeeded()) {
 					log.info("composite succeed");
@@ -76,7 +73,7 @@ public class WeatherServiceImpl implements WeatherService {
 			Future future = Future.future();
 			futures.add(future);
 			log.info("makeRequest");
-			makeRequest(((JsonObject) c).encode(), reply -> {
+			makeRequest((String) c, reply -> {
 				citiesWeathers.add(new JsonObject(reply.result()));
 				future.complete();
 			});
@@ -86,8 +83,8 @@ public class WeatherServiceImpl implements WeatherService {
 		handler.handle(Future.succeededFuture(futures));
 	}
 
-	private void makeRequest(String cityJson, Handler<AsyncResult<String>> handler) {
-		getCityWeather(cityJson, reply -> {
+	private void makeRequest(String cityId, Handler<AsyncResult<String>> handler) {
+		getCityWeather(cityId, reply -> {
 			if (reply.succeeded()) {
 				log.info("make request succeeded");
 				handler.handle(Future.succeededFuture(reply.result()));
