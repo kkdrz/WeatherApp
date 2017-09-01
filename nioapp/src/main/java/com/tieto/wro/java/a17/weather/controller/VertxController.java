@@ -3,10 +3,9 @@ package com.tieto.wro.java.a17.weather.controller;
 import com.tieto.wro.java.a17.nioapp.Config;
 import com.tieto.wro.java.a17.weather.SupportedCitiesProvider;
 import com.tieto.wro.java.a17.weather.model.City;
+import com.tieto.wro.java.a17.weather.service.WeatherServiceProxy;
 import io.vertx.core.AbstractVerticle;
 import io.vertx.core.Future;
-import io.vertx.core.eventbus.DeliveryOptions;
-import io.vertx.core.eventbus.EventBus;
 import io.vertx.core.json.Json;
 import io.vertx.ext.web.Router;
 import io.vertx.ext.web.RoutingContext;
@@ -19,43 +18,37 @@ import lombok.extern.log4j.Log4j;
 public class VertxController extends AbstractVerticle {
 
 	private Router router;
-	private EventBus eventBus;
 	private SupportedCitiesProvider suppCitiesProvider;
+	private WeatherServiceProxy service;
 
 	@Override
 	public void start(Future<Void> startFuture) throws Exception {
 		Future<Void> steps = initSuppCitiesProvider().compose(v -> startHttpServer());
 		steps.setHandler(startFuture.completer());
-		eventBus = vertx.eventBus();
+
+		service = WeatherServiceProxy.createProxy(vertx, Config.SERVICE_ADDRESS);
 	}
 
 	public void getAllCitiesWeathers(RoutingContext context) {
-		log.info("SUPPORTED JSON: \n" + Json.encode(suppCitiesProvider.getSupportedCities()));
-		
-		DeliveryOptions options = new DeliveryOptions().addHeader("action", "all");
-
-		eventBus.send(Config.SERVICE_ADDRESS, Json.encode(suppCitiesProvider.getSupportedCities()), options, reply -> {
-			log.info("reply");
+		service.getAllCitiesWeathers(Json.encode(suppCitiesProvider.getSupportedCities()), reply -> {
 			context
 					.response()
 					.putHeader("content-type", "application/json")
-					.end((String) reply.result().body());
+					.end(reply.result());
 		});
 	}
 
 	public void getCityWeather(RoutingContext context) {
 		String cityJson = findCityAndEncodeJson(context.request().getParam("city"));
 
-		DeliveryOptions options = new DeliveryOptions().addHeader("action", "single");
-
-		eventBus.send(Config.SERVICE_ADDRESS, cityJson, options, reply -> {
+		service.getCityWeather(cityJson, reply -> {
 			context
 					.response()
 					.putHeader("content-type", "application/json")
-					.end((String) reply.result().body());
+					.end(reply.result());
 		});
+
 	}
-	
 
 	private String findCityAndEncodeJson(String cityName) {
 		City city = suppCitiesProvider.getCityIfSupported(cityName);
