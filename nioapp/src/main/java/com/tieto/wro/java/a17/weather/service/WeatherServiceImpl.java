@@ -23,13 +23,13 @@ import java.util.List;
 import lombok.extern.log4j.Log4j;
 
 @Log4j
-public class WeatherServiceProxyImpl implements WeatherServiceProxy {
+public class WeatherServiceImpl implements WeatherService {
 
 	private final WundergroundResponseTransformer transformer;
 	private XmlMapper mapper;
 	private final WebClient client;
 
-	public WeatherServiceProxyImpl(WebClient client, Handler<AsyncResult<WeatherServiceProxy>> readyHandler) {
+	public WeatherServiceImpl(WebClient client, Handler<AsyncResult<WeatherService>> readyHandler) {
 		initXmlMapper();
 		this.client = client;
 		transformer = new WundergroundResponseTransformer();
@@ -37,7 +37,7 @@ public class WeatherServiceProxyImpl implements WeatherServiceProxy {
 	}
 
 	@Override
-	public WeatherServiceProxy getCityWeather(String cityJson, Handler<AsyncResult<String>> resultHandler) {
+	public WeatherService getCityWeather(String cityJson, Handler<AsyncResult<String>> resultHandler) {
 		City city = Json.decodeValue(cityJson, City.class);
 		client.get(new Formatter().format(Config.API_PATH, city.getZmw()).toString())
 				.send(ar -> {
@@ -48,7 +48,7 @@ public class WeatherServiceProxyImpl implements WeatherServiceProxy {
 	}
 
 	@Override
-	public WeatherServiceProxy getAllCitiesWeathers(String citiesJson, Handler<AsyncResult<String>> resultHandler) {
+	public WeatherService getAllCitiesWeathers(String citiesJson, Handler<AsyncResult<String>> resultHandler) {
 		JsonArray citiesWeathers = new JsonArray();
 		JsonArray cities = new JsonArray(citiesJson);
 		log.info("Przed compositem");

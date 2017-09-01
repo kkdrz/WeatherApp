@@ -3,7 +3,6 @@ package com.tieto.wro.java.a17.weather.controller;
 import com.tieto.wro.java.a17.nioapp.Config;
 import com.tieto.wro.java.a17.weather.SupportedCitiesProvider;
 import com.tieto.wro.java.a17.weather.model.City;
-import com.tieto.wro.java.a17.weather.service.WeatherServiceProxy;
 import io.vertx.core.AbstractVerticle;
 import io.vertx.core.Future;
 import io.vertx.core.json.Json;
@@ -13,20 +12,21 @@ import java.io.IOException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import lombok.extern.log4j.Log4j;
+import com.tieto.wro.java.a17.weather.service.WeatherService;
 
 @Log4j
 public class VertxController extends AbstractVerticle {
 
 	private Router router;
 	private SupportedCitiesProvider suppCitiesProvider;
-	private WeatherServiceProxy service;
+	private WeatherService service;
 
 	@Override
 	public void start(Future<Void> startFuture) throws Exception {
 		Future<Void> steps = initSuppCitiesProvider().compose(v -> startHttpServer());
 		steps.setHandler(startFuture.completer());
 
-		service = WeatherServiceProxy.createProxy(vertx, Config.SERVICE_ADDRESS);
+		service = WeatherService.createProxy(vertx, Config.SERVICE_ADDRESS);
 	}
 
 	public void getAllCitiesWeathers(RoutingContext context) {

@@ -13,9 +13,9 @@ public class WeatherServiceVerticle extends AbstractVerticle {
 	public void start(Future<Void> startFuture) throws Exception {
 		WebClient client = initWebClient();
 
-		WeatherServiceProxy.create(client, ready -> {
+		WeatherService.create(client, ready -> {
 			if (ready.succeeded()) {
-				ProxyHelper.registerService(WeatherServiceProxy.class, vertx, ready.result(), Config.SERVICE_ADDRESS);
+				ProxyHelper.registerService(WeatherService.class, vertx, ready.result(), Config.SERVICE_ADDRESS);
 				startFuture.complete();
 			} else {
 				startFuture.fail(ready.cause());
