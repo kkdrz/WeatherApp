@@ -3,6 +3,7 @@ package com.tieto.wro.java.a17.weather.service;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.dataformat.xml.XmlMapper;
 import com.fasterxml.jackson.module.jaxb.JaxbAnnotationIntrospector;
+import com.tieto.wro.java.a17.nioapp.Config;
 import com.tieto.wro.java.a17.weather.WundergroundResponseTransformer;
 import com.tieto.wro.java.a17.weather.model.City;
 import com.tieto.wro.java.a17.weather.model.CityWeather;
@@ -17,6 +18,7 @@ import io.vertx.core.json.JsonObject;
 import io.vertx.ext.web.client.WebClient;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Formatter;
 import java.util.List;
 import lombok.extern.log4j.Log4j;
 
@@ -37,7 +39,7 @@ public class WeatherServiceProxyImpl implements WeatherServiceProxy {
 	@Override
 	public WeatherServiceProxy getCityWeather(String cityJson, Handler<AsyncResult<String>> resultHandler) {
 		City city = Json.decodeValue(cityJson, City.class);
-		client.get("/api.wunderground.com/api/b6bfc129d8a2c4ea/conditions/q/zmw:" + city.getZmw() + ".xml")
+		client.get(new Formatter().format(Config.API_PATH, city.getZmw()).toString())
 				.send(ar -> {
 					CityWeather cityWeather = parseXMLtoCityWeather(ar.result().body().toString());
 					resultHandler.handle(Future.succeededFuture(Json.encode(cityWeather)));

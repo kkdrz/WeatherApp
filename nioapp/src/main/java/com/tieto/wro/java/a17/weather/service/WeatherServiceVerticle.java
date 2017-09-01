@@ -25,8 +25,8 @@ public class WeatherServiceVerticle extends AbstractVerticle {
 
 	private WebClient initWebClient() {
 		WebClientOptions options = new WebClientOptions()
-				.setDefaultHost("localhost")
-				.setDefaultPort(8089)
+				.setDefaultHost(Config.API_HOST)
+				.setDefaultPort(Config.API_PORT)
 				.setLogActivity(true);
 		return WebClient.create(vertx, options);
 	}
