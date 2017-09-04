@@ -4,12 +4,12 @@ import com.tieto.wro.java.a17.nioapp.Config;
 import com.tieto.wro.java.a17.weather.SupportedCitiesProvider;
 import com.tieto.wro.java.a17.weather.model.City;
 import com.tieto.wro.java.a17.weather.service.WeatherService;
-import io.vertx.core.AbstractVerticle;
-import io.vertx.core.Future;
 import io.vertx.core.json.Json;
 import io.vertx.core.json.JsonArray;
-import io.vertx.ext.web.Router;
-import io.vertx.ext.web.RoutingContext;
+import io.vertx.rxjava.core.AbstractVerticle;
+import io.vertx.rxjava.core.Future;
+import io.vertx.rxjava.ext.web.Router;
+import io.vertx.rxjava.ext.web.RoutingContext;
 import java.io.IOException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -24,27 +24,34 @@ public class VertxController extends AbstractVerticle {
 	private WeatherService service;
 
 	@Override
-	public void start(Future<Void> startFuture) throws Exception {
+	public void start(io.vertx.core.Future<Void> startFuture) throws Exception {
 		Future<Void> steps = initSuppCitiesProvider().compose(v -> startHttpServer());
 		steps.setHandler(startFuture.completer());
 
-		service = WeatherService.createProxy(vertx, Config.SERVICE_ADDRESS);
+		service = WeatherService.createProxy(vertx.getDelegate(), Config.SERVICE_ADDRESS);
 	}
 
 	public void getAllCitiesWeathers(RoutingContext context) {
-		JsonArray citiesIds = new JsonArray(Json.encode(
-				suppCitiesProvider.getSupportedCities()
-						.stream()
-						.map(City::getZmw)
-						.collect(Collectors.toList())
-		));
-
-		service.getAllCitiesWeathers(citiesIds, reply -> {
-			context
-					.response()
-					.putHeader("content-type", "application/json")
-					.end(reply.result());
+		vertx.executeBlocking(future -> getCitiesIds(future), ar -> {
+			service.getAllCitiesWeathers((JsonArray) ar.result(), reply -> {
+				context
+						.response()
+						.putHeader("content-type", "application/json")
+						.end(reply.result());
+			});
 		});
+
+	}
+
+	private void getCitiesIds(Future future) {
+		future.complete(
+				new JsonArray(
+						Json.encode(
+								suppCitiesProvider.getSupportedCities()
+										.stream()
+										.map(City::getZmw)
+										.collect(Collectors.toList())
+						)));
 	}
 
 	public void getCityWeather(RoutingContext context) {
@@ -82,15 +89,17 @@ public class VertxController extends AbstractVerticle {
 		vertx
 				.createHttpServer()
 				.requestHandler(router::accept)
-				.listen(config().getInteger(Config.HTTP_PORT, Config.DEFAULT_HTTP_PORT), (ar) -> {
-					if (ar.succeeded()) {
-						log.info("HTTP server running.");
-						future.complete();
-					} else {
-						log.error("Could not start a HTTP server", ar.cause());
-						future.fail(ar.cause());
-					}
-				});
+				.rxListen(config().getInteger(Config.HTTP_PORT, Config.DEFAULT_HTTP_PORT))
+				.subscribe(
+						server -> {
+							log.info("HTTP server running on port: " + server.actualPort());
+							future.complete();
+						},
+						failure -> {
+							log.error("Could not start a HTTP server", failure.getCause());
+							future.fail(failure.getCause());
+						});
+
 		return future;
 	}
 
