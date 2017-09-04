@@ -6,7 +6,7 @@ import io.vertx.core.AsyncResult;
 import io.vertx.core.Handler;
 import io.vertx.core.Vertx;
 import io.vertx.core.json.JsonArray;
-import io.vertx.ext.web.client.WebClient;
+import io.vertx.rxjava.ext.web.client.WebClient;
 
 @ProxyGen
 public interface WeatherService {

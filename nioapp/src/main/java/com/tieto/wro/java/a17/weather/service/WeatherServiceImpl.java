@@ -14,12 +14,13 @@ import io.vertx.core.Handler;
 import io.vertx.core.json.Json;
 import io.vertx.core.json.JsonArray;
 import io.vertx.core.json.JsonObject;
-import io.vertx.ext.web.client.WebClient;
+import io.vertx.rxjava.ext.web.client.WebClient;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Formatter;
 import java.util.List;
 import lombok.extern.log4j.Log4j;
+import rx.Observable;
 
 @Log4j
 public class WeatherServiceImpl implements WeatherService {
@@ -38,11 +39,17 @@ public class WeatherServiceImpl implements WeatherService {
 	@Override
 	public WeatherService getCityWeather(String cityId, Handler<AsyncResult<String>> resultHandler) {
 		log.info("GetCityWeather: " + cityId);
+
 		client.get(new Formatter().format(Config.API_PATH, cityId).toString())
-				.send(ar -> {
-					log.info("response from wunder suceeded.");
-					CityWeather cityWeather = parseXMLtoCityWeather(ar.result().body().toString());
-					resultHandler.handle(Future.succeededFuture(Json.encode(cityWeather)));
+				.rxSend()
+				.subscribe(ar -> {
+					Observable<CityWeather> cityWeather = Observable.just(ar.body().toString())
+							.flatMap(this::parseXMLtoResponse)
+							.flatMap(this::parseResponseToCityWeather);
+
+					cityWeather.subscribe(cw -> {
+						resultHandler.handle(Future.succeededFuture(Json.encode(cw)));
+					});
 				});
 		return this;
 	}
@@ -75,14 +82,17 @@ public class WeatherServiceImpl implements WeatherService {
 		return this;
 	}
 
-	private CityWeather parseXMLtoCityWeather(String responseXML) {
+	private Observable<Response> parseXMLtoResponse(String responseXML) {
 		try {
-			Response response = mapper.readValue(responseXML, Response.class);
-			return transformer.transform(response);
+			return Observable.just(mapper.readValue(responseXML, Response.class));
 		} catch (IOException ex) {
-			log.error(ex);
+			log.error("Parsing XML to Response failed.", ex);
+			return Observable.empty();
 		}
-		return null;
+	}
+
+	private Observable<CityWeather> parseResponseToCityWeather(Object response) {
+		return Observable.just(transformer.transform((Response) response));
 	}
 
 	private XmlMapper initXmlMapper() {
