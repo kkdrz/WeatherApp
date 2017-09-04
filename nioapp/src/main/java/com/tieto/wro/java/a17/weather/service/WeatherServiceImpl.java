@@ -37,8 +37,10 @@ public class WeatherServiceImpl implements WeatherService {
 
 	@Override
 	public WeatherService getCityWeather(String cityId, Handler<AsyncResult<String>> resultHandler) {
+		log.info("GetCityWeather: " + cityId);
 		client.get(new Formatter().format(Config.API_PATH, cityId).toString())
 				.send(ar -> {
+					log.info("response from wunder suceeded.");
 					CityWeather cityWeather = parseXMLtoCityWeather(ar.result().body().toString());
 					resultHandler.handle(Future.succeededFuture(Json.encode(cityWeather)));
 				});
@@ -46,52 +48,31 @@ public class WeatherServiceImpl implements WeatherService {
 	}
 
 	@Override
-	public WeatherService getAllCitiesWeathers(JsonArray citiesIds, Handler<AsyncResult<String>> resultHandler) {
+	public WeatherService getAllCitiesWeathers(JsonArray citiesIds, Handler<AsyncResult<String>> handler) {
 		JsonArray citiesWeathers = new JsonArray();
-		log.info("Przed compositem");
+		List<Future> futures = new ArrayList<>();
 
-		getRequestsFutures(citiesIds, citiesWeathers, reply -> {
-			CompositeFuture.all(reply.result()).setHandler(ar -> {
-				if (ar.succeeded()) {
-					log.info("composite succeed");
-					resultHandler.handle(Future.succeededFuture(Json.encode(citiesWeathers)));
-				} else {
-					log.info("composite failed");
-					Future.failedFuture(ar.cause());
+		citiesIds.forEach(c -> {
+			Future future = Future.future();
+			futures.add(future);
+
+			getCityWeather((String) c, reply -> {
+				if (reply.succeeded()) {
+					citiesWeathers.add(new JsonObject(reply.result()));
+					future.complete();
 				}
 			});
 		});
 
-		log.info("Po composicie");
-		return this;
-	}
-
-	private void getRequestsFutures(JsonArray cities, JsonArray citiesWeathers, Handler<AsyncResult<List<Future>>> handler) {
-		List<Future> futures = new ArrayList<>();
-
-		cities.forEach(c -> {
-			Future future = Future.future();
-			futures.add(future);
-			log.info("makeRequest");
-			makeRequest((String) c, reply -> {
-				citiesWeathers.add(new JsonObject(reply.result()));
-				future.complete();
-			});
-		});
-		log.info("tedt");
-
-		handler.handle(Future.succeededFuture(futures));
-	}
-
-	private void makeRequest(String cityId, Handler<AsyncResult<String>> handler) {
-		getCityWeather(cityId, reply -> {
-			if (reply.succeeded()) {
-				log.info("make request succeeded");
-				handler.handle(Future.succeededFuture(reply.result()));
+		CompositeFuture.all(futures).setHandler(ar -> {
+			if (ar.succeeded()) {
+				handler.handle(Future.succeededFuture(citiesWeathers.encode()));
 			} else {
-				handler.handle(Future.failedFuture(reply.cause()));
+				handler.handle(Future.failedFuture(ar.cause()));
 			}
 		});
+
+		return this;
 	}
 
 	private CityWeather parseXMLtoCityWeather(String responseXML) {

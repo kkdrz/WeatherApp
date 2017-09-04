@@ -8,7 +8,6 @@ import lombok.extern.log4j.Log4j;
 public class WundergroundResponseTransformer {
 
 	public CityWeather transform(Response response) {
-		log.info("Transforming Response to CityWeather");
 		if (response == null || response.getCurrentObservation() == null) {
 			log.warn("Response is null or doesn't provide required informations. It can't be transformed.");
 			return null;
@@ -23,8 +22,6 @@ public class WundergroundResponseTransformer {
 		cw.setWeatherDate(currObs.getObservationTime());
 		cw.setWindDirection(currObs.getWindDir());
 		cw.setWindString(currObs.getWindString());
-
-		log.info("Transforming Response to CityWeather completed.");
 		return cw;
 	}
 }
