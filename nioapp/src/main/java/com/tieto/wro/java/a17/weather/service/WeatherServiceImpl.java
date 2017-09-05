@@ -8,12 +8,10 @@ import com.tieto.wro.java.a17.weather.WundergroundResponseTransformer;
 import com.tieto.wro.java.a17.weather.model.CityWeather;
 import com.tieto.wro.java.a17.wunderground.model.Response;
 import io.vertx.core.AsyncResult;
-import io.vertx.core.CompositeFuture;
 import io.vertx.core.Future;
 import io.vertx.core.Handler;
 import io.vertx.core.json.Json;
 import io.vertx.core.json.JsonArray;
-import io.vertx.core.json.JsonObject;
 import io.vertx.rxjava.ext.web.client.WebClient;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -21,6 +19,8 @@ import java.util.Formatter;
 import java.util.List;
 import lombok.extern.log4j.Log4j;
 import rx.Observable;
+import rx.Single;
+import rx.schedulers.Schedulers;
 
 @Log4j
 public class WeatherServiceImpl implements WeatherService {
@@ -32,7 +32,7 @@ public class WeatherServiceImpl implements WeatherService {
 	public WeatherServiceImpl(WebClient client, Handler<AsyncResult<WeatherService>> readyHandler) {
 		initXmlMapper();
 		this.client = client;
-		transformer = new WundergroundResponseTransformer();
+		this.transformer = new WundergroundResponseTransformer();
 		readyHandler.handle(Future.succeededFuture(this));
 	}
 
@@ -40,59 +40,69 @@ public class WeatherServiceImpl implements WeatherService {
 	public WeatherService getCityWeather(String cityId, Handler<AsyncResult<String>> resultHandler) {
 		log.info("GetCityWeather: " + cityId);
 
-		client.get(new Formatter().format(Config.API_PATH, cityId).toString())
-				.rxSend()
-				.subscribe(ar -> {
-					Observable<CityWeather> cityWeather = Observable.just(ar.body().toString())
-							.flatMap(this::parseXMLtoResponse)
-							.flatMap(this::parseResponseToCityWeather);
-
-					cityWeather.subscribe(cw -> {
-						resultHandler.handle(Future.succeededFuture(Json.encode(cw)));
-					});
-				});
-		return this;
-	}
-
-	@Override
-	public WeatherService getAllCitiesWeathers(JsonArray citiesIds, Handler<AsyncResult<String>> handler) {
-		JsonArray citiesWeathers = new JsonArray();
-		List<Future> futures = new ArrayList<>();
-
-		citiesIds.forEach(c -> {
-			Future future = Future.future();
-			futures.add(future);
-
-			getCityWeather((String) c, reply -> {
-				if (reply.succeeded()) {
-					citiesWeathers.add(new JsonObject(reply.result()));
-					future.complete();
-				}
-			});
-		});
-
-		CompositeFuture.all(futures).setHandler(ar -> {
-			if (ar.succeeded()) {
-				handler.handle(Future.succeededFuture(citiesWeathers.encode()));
-			} else {
-				handler.handle(Future.failedFuture(ar.cause()));
-			}
+		parsedToCityWeatherRequest(cityId).subscribe(cw -> {
+			log.info("single city return to handler");
+			resultHandler.handle(Future.succeededFuture(Json.encode(cw)));
 		});
 
 		return this;
 	}
 
-	private Observable<Response> parseXMLtoResponse(String responseXML) {
+	private Single<CityWeather> parsedToCityWeatherRequest(String cityId) {
+		log.info("parsedToCityWeatherRequest");
+		return getRequest(cityId).flatMap(this::xmlToCityWeather);
+	}
+
+	private Single<CityWeather> xmlToCityWeather(String responseXML) {
+		log.info("xmltocityWeather");
+		return Single.just(responseXML)
+				.flatMap(this::xmlToResponse)
+				.flatMap(this::responseToCityWeather);
+	}
+
+	private Single<Response> xmlToResponse(String responseXML) {
 		try {
-			return Observable.just(mapper.readValue(responseXML, Response.class));
+			log.info("xmlToResponse");
+			return Single.just(mapper.readValue(responseXML, Response.class));
 		} catch (IOException ex) {
 			log.error("Parsing XML to Response failed.", ex);
-			return Observable.empty();
+			return Single.error(ex);
 		}
 	}
 
-	private Observable<CityWeather> parseResponseToCityWeather(Object response) {
-		return Observable.just(transformer.transform((Response) response));
+	private Single<CityWeather> responseToCityWeather(Object response) {
+		log.info("responseTocityWeather");
+		return Single.just(transformer.transform((Response) response));
+	}
+
+	@Override
+	public WeatherService getAllCitiesWeathers(JsonArray citiesIds, Handler<AsyncResult<String>> resultHandler) {
+		log.info("get all cities");
+		List<Single<CityWeather>> citiesWeathers = new ArrayList<>();
+
+		citiesIds.forEach(id -> {
+			log.info("Add observable CityWeather");
+			citiesWeathers.add(parsedToCityWeatherRequest(id.toString()));
+		});
+
+		Observable.from(citiesWeathers)
+				.flatMap(single -> single.toObservable().observeOn(Schedulers.computation()))
+				.toList()
+				.subscribe(result -> {
+					log.info("Subscribe, when all done");
+					resultHandler.handle(Future.succeededFuture(Json.encode(result)));
+				});
+
+		return this;
+	}
+
+	private Single<String> getRequest(String cityId) {
+		return client.get(new Formatter().format(Config.API_PATH, cityId).toString())
+				.rxSend()
+				.flatMap(a -> {
+					log.info("request from client");
+					return Single.just(a.bodyAsString());
+				});
 	}
 
 	private XmlMapper initXmlMapper() {
@@ -101,4 +111,5 @@ public class WeatherServiceImpl implements WeatherService {
 		mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
 		return mapper;
 	}
+
 }
