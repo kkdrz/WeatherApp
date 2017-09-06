@@ -18,6 +18,7 @@ import java.util.Formatter;
 import lombok.extern.log4j.Log4j;
 import rx.Observable;
 import rx.Single;
+import rx.schedulers.Schedulers;
 
 @Log4j
 public class WeatherServiceImpl implements WeatherService {
@@ -27,9 +28,9 @@ public class WeatherServiceImpl implements WeatherService {
 	private final WebClient client;
 
 	public WeatherServiceImpl(WebClient client, Handler<AsyncResult<WeatherService>> readyHandler) {
-		initXmlMapper();
 		this.client = client;
 		this.transformer = new WundergroundResponseTransformer();
+		initXmlMapper();
 		readyHandler.handle(Future.succeededFuture(this));
 	}
 
@@ -48,7 +49,7 @@ public class WeatherServiceImpl implements WeatherService {
 	public WeatherService getAllCitiesWeathers(JsonArray citiesIds, Handler<AsyncResult<String>> resultHandler) {
 		Observable.from(citiesIds)
 				.flatMap(id -> {
-					return getRequest(id.toString()).toObservable();
+					return getRequest(id.toString()).toObservable().subscribeOn(Schedulers.computation());
 				})
 				.toList()
 				.subscribe(result -> {

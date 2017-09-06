@@ -106,7 +106,6 @@ public class VertxController extends AbstractVerticle {
 							log.error("Could not start a HTTP server", failure.getCause());
 							future.fail(failure.getCause());
 						});
-
 		return future;
 	}
 
@@ -123,7 +122,7 @@ public class VertxController extends AbstractVerticle {
 		}, ar -> {
 			if (ar.succeeded()) {
 				supportedCitiesIds = (JsonArray) ar.result();
-				future.succeeded();
+				future.complete();
 			} else {
 				log.error(ar.cause());
 				future.failed();

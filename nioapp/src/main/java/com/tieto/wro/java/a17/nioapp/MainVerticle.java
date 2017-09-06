@@ -19,7 +19,7 @@ public class MainVerticle extends AbstractVerticle {
 				new DeploymentOptions().setConfig(config()).setInstances(4)).subscribe();
 
 		vertx.rxDeployVerticle("com.tieto.wro.java.a17.weather.service.WeatherServiceVerticle",
-				new DeploymentOptions().setInstances(20)).subscribe();
+				new DeploymentOptions().setInstances(60)).subscribe();
 	}
 
 }
