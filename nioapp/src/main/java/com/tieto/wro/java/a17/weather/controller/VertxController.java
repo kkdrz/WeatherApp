@@ -54,17 +54,6 @@ public class VertxController extends AbstractVerticle {
 		});
 	}
 
-	private void getCitiesIds(Future future) {
-		future.complete(
-				new JsonArray(
-						Json.encode(
-								suppCitiesProvider.getSupportedCities()
-										.stream()
-										.map(City::getZmw)
-										.collect(Collectors.toList())
-						)));
-	}
-
 	public void getCityWeather(RoutingContext context) {
 		String cityId = getIdOfCity(context.request().getParam("city"));
 
@@ -121,6 +110,12 @@ public class VertxController extends AbstractVerticle {
 		return future;
 	}
 
+	private void initRouter() {
+		router = Router.router(vertx);
+		router.get("/weather").handler(this::getAllCitiesWeathers);
+		router.get("/weather/:city").handler(this::getCityWeather);
+	}
+
 	private Future<Void> loadSupportedCitiesIds() {
 		Future<Void> future = Future.future();
 		vertx.executeBlocking(f -> {
@@ -128,7 +123,7 @@ public class VertxController extends AbstractVerticle {
 		}, ar -> {
 			if (ar.succeeded()) {
 				supportedCitiesIds = (JsonArray) ar.result();
-				future.complete();
+				future.succeeded();
 			} else {
 				log.error(ar.cause());
 				future.failed();
@@ -137,9 +132,15 @@ public class VertxController extends AbstractVerticle {
 		return future;
 	}
 
-	private void initRouter() {
-		router = Router.router(vertx);
-		router.get("/weather").handler(this::getAllCitiesWeathers);
-		router.get("/weather/:city").handler(this::getCityWeather);
+	private void getCitiesIds(Future future) {
+		future.complete(
+				new JsonArray(
+						Json.encode(
+								suppCitiesProvider.getSupportedCities()
+										.stream()
+										.map(City::getZmw)
+										.collect(Collectors.toList())
+						)));
 	}
+
 }
