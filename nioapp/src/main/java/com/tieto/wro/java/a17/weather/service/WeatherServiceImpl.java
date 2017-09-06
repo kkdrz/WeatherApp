@@ -14,13 +14,10 @@ import io.vertx.core.json.Json;
 import io.vertx.core.json.JsonArray;
 import io.vertx.rxjava.ext.web.client.WebClient;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Formatter;
-import java.util.List;
 import lombok.extern.log4j.Log4j;
 import rx.Observable;
 import rx.Single;
-import rx.schedulers.Schedulers;
 
 @Log4j
 public class WeatherServiceImpl implements WeatherService {
@@ -38,70 +35,37 @@ public class WeatherServiceImpl implements WeatherService {
 
 	@Override
 	public WeatherService getCityWeather(String cityId, Handler<AsyncResult<String>> resultHandler) {
-		log.info("GetCityWeather: " + cityId);
-
-		parsedToCityWeatherRequest(cityId).subscribe(cw -> {
-			log.info("single city return to handler");
+		getRequest(cityId).subscribe(cw -> {
 			resultHandler.handle(Future.succeededFuture(Json.encode(cw)));
+		}, error -> {
+			log.error("Request error.", error.getCause());
+			resultHandler.handle(Future.failedFuture(error));
 		});
-
 		return this;
-	}
-
-	private Single<CityWeather> parsedToCityWeatherRequest(String cityId) {
-		log.info("parsedToCityWeatherRequest");
-		return getRequest(cityId).flatMap(this::xmlToCityWeather);
-	}
-
-	private Single<CityWeather> xmlToCityWeather(String responseXML) {
-		log.info("xmltocityWeather");
-		return Single.just(responseXML)
-				.flatMap(this::xmlToResponse)
-				.flatMap(this::responseToCityWeather);
-	}
-
-	private Single<Response> xmlToResponse(String responseXML) {
-		try {
-			log.info("xmlToResponse");
-			return Single.just(mapper.readValue(responseXML, Response.class));
-		} catch (IOException ex) {
-			log.error("Parsing XML to Response failed.", ex);
-			return Single.error(ex);
-		}
-	}
-
-	private Single<CityWeather> responseToCityWeather(Object response) {
-		log.info("responseTocityWeather");
-		return Single.just(transformer.transform((Response) response));
 	}
 
 	@Override
 	public WeatherService getAllCitiesWeathers(JsonArray citiesIds, Handler<AsyncResult<String>> resultHandler) {
-		log.info("get all cities");
-		List<Single<CityWeather>> citiesWeathers = new ArrayList<>();
-
-		citiesIds.forEach(id -> {
-			log.info("Add observable CityWeather");
-			citiesWeathers.add(parsedToCityWeatherRequest(id.toString()));
-		});
-
-		Observable.from(citiesWeathers)
-				.flatMap(single -> single.toObservable().observeOn(Schedulers.computation()))
+		Observable.from(citiesIds)
+				.flatMap(id -> {
+					return getRequest(id.toString()).toObservable();
+				})
 				.toList()
 				.subscribe(result -> {
-					log.info("Subscribe, when all done");
 					resultHandler.handle(Future.succeededFuture(Json.encode(result)));
+				}, error -> {
+					log.error("Collecting CitiesWeathers failed", error.getCause());
+					resultHandler.handle(Future.failedFuture(error));
 				});
 
 		return this;
 	}
 
-	private Single<String> getRequest(String cityId) {
+	private Single<CityWeather> getRequest(String cityId) {
 		return client.get(new Formatter().format(Config.API_PATH, cityId).toString())
 				.rxSend()
-				.flatMap(a -> {
-					log.info("request from client");
-					return Single.just(a.bodyAsString());
+				.flatMap(h -> {
+					return xmlToCityWeather(h.bodyAsString());
 				});
 	}
 
@@ -110,6 +74,25 @@ public class WeatherServiceImpl implements WeatherService {
 		mapper.setAnnotationIntrospector(new JaxbAnnotationIntrospector(mapper.getTypeFactory()));
 		mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
 		return mapper;
+	}
+
+	private Single<CityWeather> xmlToCityWeather(String responseXML) {
+		return Single.just(responseXML)
+				.flatMap(this::xmlToResponse)
+				.flatMap(this::responseToCityWeather);
+	}
+
+	private Single<Response> xmlToResponse(String responseXML) {
+		try {
+			return Single.just(mapper.readValue(responseXML, Response.class));
+		} catch (IOException ex) {
+			log.error("Parsing XML to Response failed.", ex);
+			return Single.error(ex);
+		}
+	}
+
+	private Single<CityWeather> responseToCityWeather(Response response) {
+		return Single.just(transformer.transform(response));
 	}
 
 }

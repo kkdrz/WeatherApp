@@ -23,24 +23,35 @@ public class VertxController extends AbstractVerticle {
 	private SupportedCitiesProvider suppCitiesProvider;
 	private WeatherService service;
 
+	private JsonArray supportedCitiesIds;
+
 	@Override
 	public void start(io.vertx.core.Future<Void> startFuture) throws Exception {
-		Future<Void> steps = initSuppCitiesProvider().compose(v -> startHttpServer());
+		Future<Void> steps = initSuppCitiesProvider()
+				.compose(v -> loadSupportedCitiesIds())
+				.compose(v -> createProxy())
+				.compose(v -> startHttpServer());
+
 		steps.setHandler(startFuture.completer());
 
-		service = WeatherService.createProxy(vertx.getDelegate(), Config.SERVICE_ADDRESS);
 	}
 
 	public void getAllCitiesWeathers(RoutingContext context) {
-		vertx.executeBlocking(future -> getCitiesIds(future), ar -> {
-			service.getAllCitiesWeathers((JsonArray) ar.result(), reply -> {
+		service.getAllCitiesWeathers(supportedCitiesIds, reply -> {
+			if (reply.succeeded()) {
 				context
 						.response()
 						.putHeader("content-type", "application/json")
 						.end(reply.result());
-			});
-		});
+			} else {
+				log.error("Service failed.", reply.cause());
+				context
+						.response().setStatusCode(404)
+						.putHeader("content-type", "application/json")
+						.end();
+			}
 
+		});
 	}
 
 	private void getCitiesIds(Future future) {
@@ -83,6 +94,13 @@ public class VertxController extends AbstractVerticle {
 		return future;
 	}
 
+	private Future<Void> createProxy() {
+		Future<Void> future = Future.future();
+		service = WeatherService.createProxy(vertx.getDelegate(), Config.SERVICE_ADDRESS);
+		future.complete();
+		return future;
+	}
+
 	private Future<Void> startHttpServer() {
 		Future<Void> future = Future.future();
 		initRouter();
@@ -100,6 +118,22 @@ public class VertxController extends AbstractVerticle {
 							future.fail(failure.getCause());
 						});
 
+		return future;
+	}
+
+	private Future<Void> loadSupportedCitiesIds() {
+		Future<Void> future = Future.future();
+		vertx.executeBlocking(f -> {
+			getCitiesIds(f);
+		}, ar -> {
+			if (ar.succeeded()) {
+				supportedCitiesIds = (JsonArray) ar.result();
+				future.complete();
+			} else {
+				log.error(ar.cause());
+				future.failed();
+			}
+		});
 		return future;
 	}
 
